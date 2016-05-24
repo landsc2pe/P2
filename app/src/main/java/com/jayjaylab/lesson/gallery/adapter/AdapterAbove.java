@@ -1,6 +1,7 @@
 package com.jayjaylab.lesson.gallery.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +11,25 @@ import android.widget.TextView;
 import com.jayjaylab.lesson.gallery.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by HOMIN on 2016-05-12.
  */
 public class AdapterAbove extends RecyclerView.Adapter<AdapterAbove.ViewHolder> {
+    final String TAG = AdapterAbove.class.getSimpleName();
     private ArrayList<MyData> mDataset;
 
     public AdapterAbove(ArrayList<MyData> myDataset) {
-        mDataset = myDataset;
+        mDataset = new ArrayList<>(myDataset);
     }
 
+    public void addItems(List<MyData> list) {
+        Log.d(TAG, "list : " + list + ", mDataset : " + mDataset);
+        final int startPosition = mDataset.size();
+        mDataset.addAll(list);
+        notifyItemRangeInserted(startPosition, list.size());
+    }
 
     @Override
     public AdapterAbove.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

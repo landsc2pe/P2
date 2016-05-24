@@ -19,8 +19,12 @@ import android.widget.Toast;
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.fragment.Fragment1;
 import com.jayjaylab.lesson.gallery.fragment.Fragment2;
+import com.jayjaylab.lesson.gallery.model.Image;
 import com.jayjaylab.lesson.gallery.util.LoaderImage;
 import com.jayjaylab.lesson.gallery.util.LogTag;
+
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,14 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private final int MY_PERMISSION_REQUEST_STORAGE = 100;
 
     final String TAG = MainActivity.class.getSimpleName();
-    final int LOADER_ID_THUMBNAIL = 0;
-    final int LOADER_ID_IMAGE = 1;
 
     FragmentManager fragmentManager;
     Fragment1 fragment_first;
     Fragment2 fragment_second;
-
-    LoaderImage loaderImage;
 
 
     @Override
@@ -45,9 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (LogTag.DEBUG)
             Log.d(TAG, "externalCacheDir : " + getExternalCacheDir() + ", internalCacheDir : " + getCacheDir());
-
-        loaderImage = new LoaderImage();
-        loaderImage.loadImageByMediaStore(getApplicationContext());
 
         //Permission Check with CursorLoader execute.
         checkPermission();
@@ -76,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.main_layout, fragment_second, "ManageFragment");
                     fragmentManager.findFragmentByTag("ManageFragment");
-                    fragment_second.sortImagePath(loaderImage.getMap());
+//                    fragment_second.sortImagePath(loaderImage.getMap());
                     fragmentTransaction.commit();
 
                     msn++;
@@ -139,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             if(LogTag.DEBUG)Log.d(TAG, "permission is already allowed...");
 
-            getImageUriInBackground();
         }
     }
 
@@ -150,14 +146,13 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
-                    getImageUriInBackground();
 
                     // permission was granted, yay! do the
                     // calendar task you need to do.
 
                 } else {
 
-                    if(LogTag.DEBUG)Log.d(TAG, "Permission always deny");
+                    if(LogTag.DEBUG) Log.d(TAG, "Permission always deny");
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -167,9 +162,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    void getImageUriInBackground() {
-        getLoaderManager().initLoader(LOADER_ID_THUMBNAIL, null, loaderImage.getLoaderCallbacksForThumbnails());
-        getLoaderManager().initLoader(LOADER_ID_IMAGE, null, loaderImage.getLoaderCallbacksForOriginalImages());
-    }
+//    void getImageUriInBackground() {
+//        getLoaderManager().initLoader(LOADER_ID_THUMBNAIL, null, loaderImage.getLoaderCallbacksForThumbnails());
+//        getLoaderManager().initLoader(LOADER_ID_IMAGE, null, loaderImage.getLoaderCallbacksForOriginalImages());
+//    }
 
 }

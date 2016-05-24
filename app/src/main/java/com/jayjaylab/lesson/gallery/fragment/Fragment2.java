@@ -20,6 +20,7 @@ import com.jayjaylab.lesson.gallery.adapter.MyAdapter;
 import com.jayjaylab.lesson.gallery.adapter.AdapterAbove;
 import com.jayjaylab.lesson.gallery.adapter.MyData;
 import com.jayjaylab.lesson.gallery.model.Image;
+import com.jayjaylab.lesson.gallery.util.LoaderImage;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 
 import java.io.File;
@@ -46,11 +47,13 @@ public class Fragment2 extends Fragment {
     private RecyclerView recyclerViewAbove;
     private RecyclerView recyclerViewMenu;
     private RecyclerView recyclerViewGallery;
-    private RecyclerView.Adapter adapterMenu, adapterAbove;
+    private MyAdapter adapterMenu;
+    private AdapterAbove adapterAbove;
     private ArrayList<MyData> myDataset;
     private File mGalleryFolder;
     private String GALLERY_LOCATION = ".thumbnails";
     private AdapterImage adapterImage;
+    LoaderImage loaderImage;
 
 //    public static Fragment2 newInstance(String[] imageFiles) {
 //        Fragment2 fragment = new Fragment2();
@@ -65,12 +68,12 @@ public class Fragment2 extends Fragment {
     public void sortImagePath(Map<String, List<Image>> map) {
         mapSize = map.size();
         hashMap = map;
+        Log.d(TAG, "mapSize : " + mapSize + ", hashMap : " + map);
 
         folderName = new ArrayList<>();
         keyArray = new ArrayList<>();
 
         Iterator<String> iter = hashMap.keySet().iterator();
-
         while (iter.hasNext()) {
             String keys = iter.next();
             keyArray.add(keys);
@@ -104,10 +107,26 @@ public class Fragment2 extends Fragment {
         mContext = getActivity();
         myDataset = new ArrayList<>();
 
-        //"Above" icon button creator using folder name array.
-        for (int i = 0; i < mapSize; i++) {
-            myDataset.add(new MyData(folderName.get(i), R.mipmap.ic_launcher));
-        }
+        loaderImage = new LoaderImage();
+
+//        loaderImage.setOnImageLoadListener(new LoaderImage.OnImageLoadListener() {
+//            @Override
+//            public void onLoad(Map<String, List<Image>> map) {
+//
+//            }
+//        });
+//        loaderImage.loadImageByMediaStore(getApplicationContext());
+
+
+        loaderImage.loadImageByMediaStore(getActivity(), new LoaderImage.OnImageLoadListener() {
+            @Override
+            public void onLoad(Map<String, List<Image>> map) {
+                if(LogTag.DEBUG) Log.d(TAG, "map : " + map);
+
+                // display given images on gallery
+                setIconAndImageMap(map);
+            }
+        });
 
         recyclerViewAbove.setHasFixedSize(true);
         recyclerViewMenu.setHasFixedSize(true);
@@ -122,6 +141,7 @@ public class Fragment2 extends Fragment {
         recyclerViewGallery.setLayoutManager(gridLayoutManager);
         recyclerViewGallery.setItemViewCacheSize(40);
 
+        if(LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset);
         adapterAbove = new AdapterAbove(myDataset);
         adapterMenu = new MyAdapter(myDataset);
 
@@ -133,19 +153,16 @@ public class Fragment2 extends Fragment {
 
             @Override
             public void onItemClick(View view, int position) {
+                // FIXME: 2016. 5. 24. WTF
                 imageFiles = hashMap.get(keyArray.get(position));
-
                 adapterImage = new AdapterImage(Fragment2.this, imageFiles);
                 adapterImage.setOnItemClickListener(new AdapterImage.OnItemClickListener() {
-
-
                     @Override
                     public void onClick(int position) {
 
                     }
                 });
                 recyclerViewGallery.setAdapter(adapterImage);
-
             }
 
             @Override
@@ -154,6 +171,22 @@ public class Fragment2 extends Fragment {
 
             }
         }));
+    }
+
+    /**
+     * 아이콘 세팅 및 해쉬맵 설정한다.
+     * @param map 이미지를 가지는 맵.
+     */
+    void setIconAndImageMap(Map<String, List<Image>> map) {
+        sortImagePath(map);
+        //"Above" icon button creator using folder name array.
+        for (int i = 0; i < mapSize; i++) {
+            if(LogTag.DEBUG) Log.d(TAG, "folder : " + folderName.get(i));
+            myDataset.add(new MyData(folderName.get(i), R.mipmap.ic_launcher));
+        }
+        if(LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset);
+        adapterAbove.addItems(myDataset);
+        adapterMenu.addItems(myDataset);
     }
 
 

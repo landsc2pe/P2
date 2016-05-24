@@ -34,6 +34,15 @@ public class AdapterImage extends RecyclerView.Adapter<AdapterImage.ViewHolder> 
         imagesFile = folderFile;
     }
 
+    public void clearItems() {
+        imagesFile.clear();
+    }
+
+    public void addItems(List<Image> items) {
+
+    }
+
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         onItemClickListener = listener;
     }

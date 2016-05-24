@@ -1,5 +1,6 @@
 package com.jayjaylab.lesson.gallery.util;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -21,18 +22,21 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ *
+ *
  * Created by jjkim on 2016. 5. 21..
  */
 public class LoaderImage implements ListenerOnLoad {
-
     final String TAG = LoaderImage.class.getSimpleName();
+    final int LOADER_ID_THUMBNAIL = 0;
+    final int LOADER_ID_IMAGE = 1;
 
     public LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForOriginalImages;
     public LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForThumbnails;
     public Map<String, List<Image>> map;
     public SparseArray<Image> arrayImage;
     public Thumbnail[] arrayThumbnails;
-
+    OnImageLoadListener onImageLoadListener;
 
 
     //Getters
@@ -40,20 +44,11 @@ public class LoaderImage implements ListenerOnLoad {
         return map;
     }
 
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderCallbacksForOriginalImages() {
-        return loaderCallbacksForOriginalImages;
+    public void setOnImageLoadListener(OnImageLoadListener listener) {
+        onImageLoadListener = listener;
     }
 
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderCallbacksForThumbnails() {
-        return loaderCallbacksForThumbnails;
-    }
-
-
-
-
-    public void loadImageByMediaStore(final Context context) {
-
-
+    public void loadImageByMediaStore(final Activity activity) {
         loaderCallbacksForOriginalImages = new LoaderManager.LoaderCallbacks<Cursor>() {
 
             @Override
@@ -61,7 +56,7 @@ public class LoaderImage implements ListenerOnLoad {
                 String[] projection = {MediaStore.Images.Media._ID,
                         MediaStore.Images.Media.DATA};
 
-                CursorLoader cursorLoader = new CursorLoader(context,
+                CursorLoader cursorLoader = new CursorLoader(activity,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                         projection, null, null, null);
 
@@ -109,7 +104,7 @@ public class LoaderImage implements ListenerOnLoad {
                         MediaStore.Images.Thumbnails.DATA,
                         MediaStore.Images.Thumbnails.IMAGE_ID};
 
-                CursorLoader cursorLoader = new CursorLoader(context,
+                CursorLoader cursorLoader = new CursorLoader(activity,
                         MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
                         projection, null, null, null);
 
@@ -134,7 +129,7 @@ public class LoaderImage implements ListenerOnLoad {
                     imageId = data.getInt(data.getColumnIndex(MediaStore.Images.Thumbnails
                             .IMAGE_ID));
 
-                    if(LogTag.DEBUG)Log.d(TAG, "id : " + id + ", imageId : " + imageId + ", path : " + path);
+//                    if(LogTag.DEBUG)Log.d(TAG, "id : " + id + ", imageId : " + imageId + ", path : " + path);
                     thumbnails[count] = new Thumbnail(id, imageId, path);
                     count++;
                 }
@@ -150,6 +145,16 @@ public class LoaderImage implements ListenerOnLoad {
 
             }
         };
+
+        activity.getLoaderManager().initLoader(LOADER_ID_THUMBNAIL, null, loaderCallbacksForThumbnails);
+        activity.getLoaderManager().initLoader(LOADER_ID_IMAGE, null, loaderCallbacksForOriginalImages);
+    }
+
+
+    public void loadImageByMediaStore(final Activity activity,
+                                      OnImageLoadListener listener) {
+        setOnImageLoadListener(listener);
+        loadImageByMediaStore(activity);
     }
 
 
@@ -177,14 +182,14 @@ public class LoaderImage implements ListenerOnLoad {
         map = new HashMap<>();
 
         for (Thumbnail thumbnail : thumbnails) {
-            if(LogTag.DEBUG)Log.d(TAG, "thumbnail : " + thumbnail);
+//            if(LogTag.DEBUG)Log.d(TAG, "thumbnail : " + thumbnail);
 
             // FIXME: 2016. 5. 17. why is thumbnail null????  => Fixed (Switched row)
             if (thumbnail != null) {
                 Image originalImage = arrayImage.get(thumbnail.getImageId());
                 if (originalImage != null) {
                     originalImage.setThumbnail(thumbnail);
-                    if(LogTag.DEBUG)Log.d(TAG, "originalImage : " + originalImage);
+//                    if(LogTag.DEBUG)Log.d(TAG, "originalImage : " + originalImage);
 
                     //extract folder path.
                     String parent = new File(originalImage.getPath()).getParent();
@@ -204,12 +209,17 @@ public class LoaderImage implements ListenerOnLoad {
 
         Set<Map.Entry<String, List<Image>>> entrySet = map.entrySet();
         for (Map.Entry entry : entrySet) {
-            if(LogTag.DEBUG)Log.d(TAG, "key : " + entry.getKey() + ", values : " + entry.getValue());
+//            if(LogTag.DEBUG)Log.d(TAG, "key : " + entry.getKey() + ", values : " + entry.getValue());
         }
 
+        if(onImageLoadListener != null) {
+            onImageLoadListener.onLoad(map);
+        }
 
         return map;
     }
-}
 
-// TODO: 2016. 5. 21. Creates a listener
+    public interface OnImageLoadListener {
+        void onLoad(Map<String, List<Image>> map);
+    }
+}
