@@ -5,9 +5,15 @@ import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,63 +23,77 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.jayjaylab.lesson.gallery.R;
-import com.jayjaylab.lesson.gallery.fragment.Fragment1;
-import com.jayjaylab.lesson.gallery.fragment.Fragment2;
-import com.jayjaylab.lesson.gallery.model.Image;
-import com.jayjaylab.lesson.gallery.util.LoaderImage;
+import com.jayjaylab.lesson.gallery.adapter.AdapterViewPager;
+import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 
-import java.util.List;
-import java.util.Map;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static int msn = 1;
-
     private final int MY_PERMISSION_REQUEST_STORAGE = 100;
 
     final String TAG = MainActivity.class.getSimpleName();
 
-    FragmentManager fragmentManager;
-    Fragment1 fragment_first;
-    Fragment2 fragment_second;
+    android.support.v4.app.FragmentManager fragmentManager;
+    FragmentFolder fragmentFolder;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.nav_drawer_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.rcvr_tl_tabs);
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
+        AdapterViewPager adapter = new AdapterViewPager(getSupportFragmentManager(), tabLayout.getTabCount());
+
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout){});
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         if (LogTag.DEBUG)
             Log.d(TAG, "externalCacheDir : " + getExternalCacheDir() + ", internalCacheDir : " + getCacheDir());
 
         //Permission Check with CursorLoader execute.
         checkPermission();
 
-        fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        fragment_first = new Fragment1();
-        fragmentTransaction.replace(R.id.main_layout, fragment_first, Fragment1.TAG);
-        fragmentTransaction.commit();
-
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(null);
-
-        toolbar.setNavigationIcon(R.mipmap.ic_launcher);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
+            public void onClick(View view) {
                 if (msn == 1) {
-                    fragment_second = new Fragment2();
+                    tabLayout.removeAllTabs();
+                    fragmentFolder = new FragmentFolder();
                     fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.main_layout, fragment_second, "ManageFragment");
-                    fragmentManager.findFragmentByTag("ManageFragment");
-//                    fragment_second.sortImagePath(loaderImage.getMap());
+                    fragmentTransaction.add(R.id.main_layout, fragmentFolder, "ManageFragment");
+//                    fragmentTransaction.addToBackStack("ManageFragment");
+//                    fragmentManager.findFragmentByTag("ManageFragment");
                     fragmentTransaction.commit();
 
                     msn++;
@@ -81,33 +101,80 @@ public class MainActivity extends AppCompatActivity {
                 } else if (msn == 2) {
                     fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.main_layout, fragment_first, "MainFragment");
+                    fragmentTransaction.remove(fragmentFolder);
                     fragmentTransaction.commit();
 
                     msn--;
                 }
             }
-
-
         });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.drawer_setting_meun, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
 
