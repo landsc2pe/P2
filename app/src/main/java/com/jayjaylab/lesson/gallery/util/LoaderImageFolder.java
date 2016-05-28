@@ -42,6 +42,7 @@ public class LoaderImageFolder implements ListenerOnLoad {
     }
 
     public void loadImageByMediaStore(final Activity activity) {
+        Log.d(TAG, "loadImageByMediaStore() : activity : " + activity);
         loaderCallbacksForOriginalImages = new android.app.LoaderManager.LoaderCallbacks<Cursor>() {
 
             @Override
@@ -58,6 +59,9 @@ public class LoaderImageFolder implements ListenerOnLoad {
 
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                if(data.isClosed())
+                    return;
+
                 if(LogTag.DEBUG)Log.d(TAG, "count : " + data.getCount());
 
                 int id;
@@ -106,6 +110,9 @@ public class LoaderImageFolder implements ListenerOnLoad {
 
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                if(data.isClosed())
+                    return;
+
                 if(LogTag.DEBUG)Log.d(TAG, "count : " + data.getCount());
 
                 Thumbnail[] thumbnails = new Thumbnail[data.getCount()];
@@ -156,6 +163,7 @@ public class LoaderImageFolder implements ListenerOnLoad {
     @Override
     public void onLoadThumbnails(Thumbnail[] thumbnails) {
         if(LogTag.DEBUG)Log.d(TAG, "arrayThumbnails : " + thumbnails + ", # : " + thumbnails.length);
+        if(LogTag.DEBUG) Log.d(TAG, "thread1 : " + Thread.currentThread());
         this.arrayThumbnails = thumbnails;
         createMapOfDirectoryImages1(arrayImage, arrayThumbnails);
     }
@@ -163,11 +171,12 @@ public class LoaderImageFolder implements ListenerOnLoad {
     @Override
     public void onLoadOriginalImages(SparseArray<Image> sparseArray) {
         if(LogTag.DEBUG)Log.d(TAG, "images : " + sparseArray + ", # : " + sparseArray.size());
+        if(LogTag.DEBUG) Log.d(TAG, "thread2 : " + Thread.currentThread());
         this.arrayImage = sparseArray;
         createMapOfDirectoryImages1(arrayImage, arrayThumbnails);
     }
 
-    synchronized Map<String, List<Image>> createMapOfDirectoryImages1(
+    Map<String, List<Image>> createMapOfDirectoryImages1(
             SparseArray<Image> arrayImage, Thumbnail[] thumbnails) {
         if (arrayImage == null || thumbnails == null)
             return null;

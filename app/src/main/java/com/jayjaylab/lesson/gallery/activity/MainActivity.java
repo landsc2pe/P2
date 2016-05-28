@@ -87,23 +87,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
                 if (msn == 1) {
-                    tabLayout.removeAllTabs();
-                    fragmentFolder = new FragmentFolder();
+//                    tabLayout.removeAllTabs();
+                    Log.d(TAG, "msn == 1");
+//                    if(fragmentFolder == null)
+//                        fragmentFolder = new FragmentFolder();
+//
+//                    fragmentFolder = (FragmentFolder)
+//                            getSupportFragmentManager().findFragmentByTag("ManageFragment");
+//                    if(fragmentFolder == null) {
+//                        fragmentFolder = new FragmentFolder();
+//                    }
+
                     fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.add(R.id.main_layout, fragmentFolder, "ManageFragment");
 //                    fragmentTransaction.addToBackStack("ManageFragment");
 //                    fragmentManager.findFragmentByTag("ManageFragment");
                     fragmentTransaction.commit();
+                    tabLayout.setVisibility(View.INVISIBLE);
 
                     msn++;
 
                 } else if (msn == 2) {
+                    Log.d(TAG, "msn == 2");
                     fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.remove(fragmentFolder);
                     fragmentTransaction.commit();
-
+                    tabLayout.setVisibility(View.VISIBLE);
                     msn--;
                 }
             }
