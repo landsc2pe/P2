@@ -20,33 +20,35 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- *
  * Created by jjkim on 2016. 5. 21..
  */
-public class LoaderImageFolder implements ListenerOnLoad {
+public class LoaderImageFolder implements OnLoadListener {
     final String TAG = LoaderImageFolder.class.getSimpleName();
     final int LOADER_ID_THUMBNAIL = 0;
     final int LOADER_ID_IMAGE = 1;
 
+    public static Map<String, List<Image>> map;
+    public static Thumbnail[] arrayThumbnails;
+
     public android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForOriginalImages;
     public android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForThumbnails;
-    public Map<String, List<Image>> map;
     public SparseArray<Image> arrayImage;
-    public Thumbnail[] arrayThumbnails;
     OnImageLoadListener onImageLoadListener;
 
-
-    public void setOnImageLoadListener(OnImageLoadListener listener) {
-        onImageLoadListener = listener;
+    public void imageLoaderByMediaStore(final Activity activity, OnImageLoadListener listener) {
+        loadImageByMediaStore(activity);
+        setOnImageLoadListener(listener);
     }
 
     public void loadImageByMediaStore(final Activity activity) {
         Log.d(TAG, "loadImageByMediaStore() : activity : " + activity);
+
         loaderCallbacksForOriginalImages = new android.app.LoaderManager.LoaderCallbacks<Cursor>() {
 
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                if (LogTag.DEBUG) Log.d(TAG, "id1 : " + id);
+
                 String[] projection = {MediaStore.Images.Media._ID,
                         MediaStore.Images.Media.DATA};
 
@@ -59,33 +61,34 @@ public class LoaderImageFolder implements ListenerOnLoad {
 
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                if(data.isClosed())
-                    return;
-
-                if(LogTag.DEBUG)Log.d(TAG, "count : " + data.getCount());
-
                 int id;
                 String path;
+                if (data != null && data.getCount() > 0) {
+                    if (LogTag.DEBUG) Log.d(TAG, "count : " + data.getCount());
 
-                SparseArray<Image> sparseArrayImage = new SparseArray<>(data.getCount());
 
-                data.moveToFirst();
-                while (data.moveToNext()) {
-                    // making image path to array
-                    id = data.getInt(data.getColumnIndex(MediaStore.Images.Media._ID));
-                    path = data.getString(data.getColumnIndex(MediaStore.Images.Media.DATA));
+                    SparseArray<Image> sparseArrayImage = new SparseArray<>(data.getCount());
 
-                    sparseArrayImage.append(id, new Image(id, path));
+                    data.moveToFirst();
+                    while (data.moveToNext()) {
+                        // making image path to array
+                        id = data.getInt(data.getColumnIndex(MediaStore.Images.Media._ID));
+                        path = data.getString(data.getColumnIndex(MediaStore.Images.Media.DATA));
+
+                        sparseArrayImage.append(id, new Image(id, path));
+                    }
+
+                    if (sparseArrayImage.size() > 0) {
+                        onLoadOriginalImages(sparseArrayImage);
+                    }
                 }
-                data.close();
 
-                if (sparseArrayImage != null && sparseArrayImage.size() > 0) {
-                    onLoadOriginalImages(sparseArrayImage);
-                }
+
             }
 
             @Override
             public void onLoaderReset(Loader<Cursor> loader) {
+                loader = null;
 
             }
         };
@@ -95,7 +98,7 @@ public class LoaderImageFolder implements ListenerOnLoad {
 
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                if(LogTag.DEBUG)Log.d(TAG, "id : " + id);
+                if (LogTag.DEBUG) Log.d(TAG, "id2 : " + id);
 
                 String[] projection = {MediaStore.Images.Thumbnails._ID,
                         MediaStore.Images.Thumbnails.DATA,
@@ -110,38 +113,38 @@ public class LoaderImageFolder implements ListenerOnLoad {
 
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                if(data.isClosed())
-                    return;
-
-                if(LogTag.DEBUG)Log.d(TAG, "count : " + data.getCount());
-
-                Thumbnail[] thumbnails = new Thumbnail[data.getCount()];
-
                 String path;
                 int id, imageId;
                 int count = 0;
 
-                data.moveToFirst();
-                while (data.moveToNext()) {
-                    //making image path to array
-                    path = data.getString(data.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
-                    id = data.getInt(data.getColumnIndex(MediaStore.Images.Thumbnails._ID));
-                    imageId = data.getInt(data.getColumnIndex(MediaStore.Images.Thumbnails
-                            .IMAGE_ID));
+                if (data != null && data.getCount() > 0) {
+                    if (LogTag.DEBUG) Log.d(TAG, "count : " + data.getCount());
+
+                    Thumbnail[] thumbnails = new Thumbnail[data.getCount()];
+
+                    data.moveToFirst();
+                    while (data.moveToNext()) {
+                        //making image path to array
+                        path = data.getString(data.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
+                        id = data.getInt(data.getColumnIndex(MediaStore.Images.Thumbnails._ID));
+                        imageId = data.getInt(data.getColumnIndex(MediaStore.Images.Thumbnails
+                                .IMAGE_ID));
 
 //                    if(LogTag.DEBUG)Log.d(TAG, "id : " + id + ", imageId : " + imageId + ", path : " + path);
-                    thumbnails[count] = new Thumbnail(id, imageId, path);
-                    count++;
-                }
-                data.close();
+                        thumbnails[count] = new Thumbnail(id, imageId, path);
+                        count++;
+                    }
 
-                if (thumbnails != null && thumbnails.length > 0) {
-                    onLoadThumbnails(thumbnails);
+                    if (thumbnails.length > 0) {
+                        onLoadThumbnails(thumbnails);
+                    }
                 }
+
             }
 
             @Override
             public void onLoaderReset(Loader<Cursor> loader) {
+                loader = null;
 
             }
         };
@@ -151,10 +154,8 @@ public class LoaderImageFolder implements ListenerOnLoad {
     }
 
 
-    public void loadImageByMediaStore(final Activity activity,
-                                      OnImageLoadListener listener) {
-        setOnImageLoadListener(listener);
-        loadImageByMediaStore(activity);
+    public void setOnImageLoadListener(OnImageLoadListener listener) {
+        onImageLoadListener = listener;
     }
 
 
@@ -162,21 +163,22 @@ public class LoaderImageFolder implements ListenerOnLoad {
 
     @Override
     public void onLoadThumbnails(Thumbnail[] thumbnails) {
-        if(LogTag.DEBUG)Log.d(TAG, "arrayThumbnails : " + thumbnails + ", # : " + thumbnails.length);
-        if(LogTag.DEBUG) Log.d(TAG, "thread1 : " + Thread.currentThread());
-        this.arrayThumbnails = thumbnails;
-        createMapOfDirectoryImages1(arrayImage, arrayThumbnails);
+        if (LogTag.DEBUG)
+            Log.d(TAG, "arrayThumbnails : " + thumbnails + ", # : " + thumbnails.length);
+        if (LogTag.DEBUG) Log.d(TAG, "thread1 : " + Thread.currentThread());
+        arrayThumbnails = thumbnails;
+        createMapOfDirectoryImages(arrayImage, arrayThumbnails);
     }
 
     @Override
     public void onLoadOriginalImages(SparseArray<Image> sparseArray) {
-        if(LogTag.DEBUG)Log.d(TAG, "images : " + sparseArray + ", # : " + sparseArray.size());
-        if(LogTag.DEBUG) Log.d(TAG, "thread2 : " + Thread.currentThread());
+        if (LogTag.DEBUG) Log.d(TAG, "images : " + sparseArray + ", # : " + sparseArray.size());
+        if (LogTag.DEBUG) Log.d(TAG, "thread2 : " + Thread.currentThread());
         this.arrayImage = sparseArray;
-        createMapOfDirectoryImages1(arrayImage, arrayThumbnails);
+        createMapOfDirectoryImages(arrayImage, arrayThumbnails);
     }
 
-    Map<String, List<Image>> createMapOfDirectoryImages1(
+    Map<String, List<Image>> createMapOfDirectoryImages(
             SparseArray<Image> arrayImage, Thumbnail[] thumbnails) {
         if (arrayImage == null || thumbnails == null)
             return null;
@@ -214,7 +216,7 @@ public class LoaderImageFolder implements ListenerOnLoad {
 //            if(LogTag.DEBUG)Log.d(TAG, "key : " + entry.getKey() + ", values : " + entry.getValue());
         }
 
-        if(onImageLoadListener != null) {
+        if (onImageLoadListener != null) {
             onImageLoadListener.onLoad(map);
         }
 

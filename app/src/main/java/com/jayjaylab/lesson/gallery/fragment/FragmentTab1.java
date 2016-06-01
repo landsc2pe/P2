@@ -12,19 +12,21 @@ import android.view.ViewGroup;
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.AdapterImageTab1;
 
+import static com.jayjaylab.lesson.gallery.util.LoaderImageFolder.arrayThumbnails;
+
 /**
  * Created by Homin on 2016-04-07.
  */
 public class FragmentTab1 extends Fragment {
     public static final String TAG = FragmentTab1.class.getSimpleName();
-    private RecyclerView fragemntTab1;
+    private RecyclerView fragmentTab1;
     private GridLayoutManager layoutManager;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_fragment_tab1, container, false);
-        fragemntTab1 = (RecyclerView) rootView.findViewById(R.id.fragment_tab1);
+        fragmentTab1 = (RecyclerView) rootView.findViewById(R.id.fragment_tab1);
 
         return rootView;
 
@@ -35,11 +37,11 @@ public class FragmentTab1 extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        fragemntTab1.setHasFixedSize(true);
+        fragmentTab1.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getContext(), 5);
 
-        fragemntTab1.setLayoutManager(layoutManager);
-        fragemntTab1.setAdapter(new AdapterImageTab1(this));
+        fragmentTab1.setLayoutManager(layoutManager);
+        fragmentTab1.setAdapter(new AdapterImageTab1(this, arrayThumbnails));
 
 
     }

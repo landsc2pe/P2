@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -25,7 +26,12 @@ import android.widget.Toast;
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.AdapterViewPager;
 import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
+import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
+import com.jayjaylab.lesson.gallery.util.model.Image;
+
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -34,9 +40,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     final String TAG = MainActivity.class.getSimpleName();
 
-    android.support.v4.app.FragmentManager fragmentManager;
+    FragmentManager fragmentManager;
     FragmentFolder fragmentFolder;
     FragmentTransaction fragmentTransaction;
+    LoaderImageFolder loaderImageFolder;
 
 
     @Override
@@ -46,37 +53,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.rcvr_tl_tabs);
+
+        assert tabLayout != null;
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
         tabLayout.addTab(tabLayout.newTab());
         tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
-        AdapterViewPager adapter = new AdapterViewPager(getSupportFragmentManager(), tabLayout.getTabCount());
+        loaderImageFolder = new LoaderImageFolder();
+        loaderImageFolder.imageLoaderByMediaStore(this, new LoaderImageFolder.OnImageLoadListener() {
+            @Override
+            public void onLoad(Map<String, List<Image>> map) {
+                if(LogTag.DEBUG) Log.d(TAG, "map : " + map);
 
-        viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
+
+                final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
+                AdapterViewPager adapter = new AdapterViewPager(getSupportFragmentManager(), tabLayout.getTabCount());
+
+                assert viewPager != null;
+                viewPager.setAdapter(adapter);
+                viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
+                });
+                tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        viewPager.setCurrentItem(tab.getPosition());
+
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+
+                    }
+                });
+            }
         });
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
 
         if (LogTag.DEBUG)
             Log.d(TAG, "externalCacheDir : " + getExternalCacheDir() + ", internalCacheDir : " + getCacheDir());

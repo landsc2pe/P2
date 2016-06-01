@@ -19,7 +19,7 @@ import com.jayjaylab.lesson.gallery.adapter.AdapterImageFolder;
 import com.jayjaylab.lesson.gallery.adapter.AdapterFolderRight;
 import com.jayjaylab.lesson.gallery.adapter.frame.IconData;
 import com.jayjaylab.lesson.gallery.util.model.Image;
-import com.jayjaylab.lesson.gallery.util.ListenerOnClick;
+import com.jayjaylab.lesson.gallery.util.OnClickListener;
 import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 
@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.jayjaylab.lesson.gallery.util.LoaderImageFolder.map;
 
 /**
  * Created by Homin on 2016-04-07.
@@ -62,27 +64,6 @@ public class FragmentFolder extends Fragment {
 
 
 
-    public void sortImagePath(Map<String, List<Image>> map) {
-        mapSize = map.size();
-        hashMap = map;
-        adapterImageFolder = new AdapterImageFolder[mapSize];
-        Log.d(TAG, "mapSize : " + mapSize + ", hashMap : " + map);
-
-        folderName = new ArrayList<>();
-        keyArray = new ArrayList<>();
-
-        Iterator<String> iter = hashMap.keySet().iterator();
-        while (iter.hasNext()) {
-            String keys = iter.next();
-            keyArray.add(keys);
-            String[] it = keys.split("/");
-            int a = it.length - 1;
-            folderName.add(it[a]);
-        }
-
-//        folderName = hashMap.keySet().toArray(new String[map.size()]);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,8 +87,8 @@ public class FragmentFolder extends Fragment {
         myDataset = new ArrayList<>();
 
 
-
-        loaderImageFolder = new LoaderImageFolder();
+        setIconAndImageMap(map);
+//        loaderImageFolder = new LoaderImageFolder();
 
 //        loaderImageFolder.setOnImageLoadListener(new LoaderImageFolder.OnImageLoadListener() {
 //            @Override
@@ -117,15 +98,15 @@ public class FragmentFolder extends Fragment {
 //        });
 //        loaderImageFolder.loadImageByMediaStore(getApplicationContext());
 
-        loaderImageFolder.loadImageByMediaStore(mActivity, new LoaderImageFolder.OnImageLoadListener() {
-            @Override
-            public void onLoad(Map<String, List<Image>> map) {
-                if(LogTag.DEBUG) Log.d(TAG, "map : " + map);
-
-                // display given images on gallery
-                setIconAndImageMap(map);
-            }
-        });
+//        loaderImageFolder.imageLoaderByMediaStore(mActivity, new LoaderImageFolder.OnImageLoadListener() {
+//            @Override
+//            public void onLoad(Map<String, List<Image>> map) {
+//                if(LogTag.DEBUG) Log.d(TAG, "map : " + map);
+//
+//                // display given images on gallery
+//                setIconAndImageMap(map);
+//            }
+//        });
 
         recyclerViewAbove.setHasFixedSize(true);
         recyclerViewMenu.setHasFixedSize(true);
@@ -149,7 +130,7 @@ public class FragmentFolder extends Fragment {
 
 
         //"Above" icon touch listener.
-        recyclerViewAbove.addOnItemTouchListener(new ListenerOnClick(getActivity(), recyclerViewAbove, new ListenerOnClick.OnItemClickListener() {
+        recyclerViewAbove.addOnItemTouchListener(new OnClickListener(getActivity(), recyclerViewAbove, new OnClickListener.OnItemClickListener() {
 
             @Override
             public void onItemClick(View view, int position) {
@@ -181,6 +162,29 @@ public class FragmentFolder extends Fragment {
     }
 
 
+
+    public void sortImagePath(Map<String, List<Image>> map) {
+        mapSize = map.size();
+        hashMap = map;
+        adapterImageFolder = new AdapterImageFolder[mapSize];
+        Log.d(TAG, "mapSize : " + mapSize + ", hashMap : " + map);
+
+        folderName = new ArrayList<>();
+        keyArray = new ArrayList<>();
+
+        Iterator<String> iter = hashMap.keySet().iterator();
+        while (iter.hasNext()) {
+            String keys = iter.next();
+            keyArray.add(keys);
+            String[] it = keys.split("/");
+            int a = it.length - 1;
+            folderName.add(it[a]);
+        }
+
+//        folderName = hashMap.keySet().toArray(new String[map.size()]);
+    }
+
+
     /**
      * 아이콘 세팅 및 해쉬맵 설정한다.
      * @param map 이미지를 가지는 맵.
@@ -192,9 +196,9 @@ public class FragmentFolder extends Fragment {
             if(LogTag.DEBUG) Log.d(TAG, "folder : " + folderName.get(i));
             myDataset.add(new IconData(folderName.get(i), R.mipmap.ic_launcher));
         }
-        if(LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset);
-        adapterFolderAbove.addItems(myDataset);
-        adapterMenu.addItems(myDataset);
+        if(LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset.toString());
+//        adapterFolderAbove.addItems(myDataset);
+//        adapterMenu.addItems(myDataset);
     }
 
 

@@ -1,22 +1,30 @@
 package com.jayjaylab.lesson.gallery.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.frame.ViewHolder;
 import com.jayjaylab.lesson.gallery.fragment.FragmentTab1;
+import com.jayjaylab.lesson.gallery.util.LogTag;
+import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
 /**
  * Created by HOMIN on 2016-05-27.
  */
 public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
     FragmentTab1 fragment;
+    Thumbnail[] imagesFile;
 
     //// TODO: 2016-05-26 add data arg. 
-    public AdapterImageTab1(FragmentTab1 fragment ){
+    public AdapterImageTab1(FragmentTab1 fragment, Thumbnail[] thumbnails){
+        this.fragment = fragment;
+        imagesFile = thumbnails;
 
     }
 
@@ -29,11 +37,21 @@ public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        String path = imagesFile[position].getPath();
+        if(LogTag.DEBUG) Log.d("ImagePath",path);
+
+        Glide.with(fragment)
+                .load(path)
+                .override(200,200)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .thumbnail(0.3f)
+                .centerCrop()
+                .into(holder.imageView);
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return imagesFile.length;
     }
 }

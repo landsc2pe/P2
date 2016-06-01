@@ -7,7 +7,7 @@ import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 /**
  * Created by jjkim on 2016. 5. 17..
  */
-public interface ListenerOnLoad {
+public interface OnLoadListener {
     void onLoadThumbnails(Thumbnail[] thumbnails);
     void onLoadOriginalImages(SparseArray<Image> images);
 }
