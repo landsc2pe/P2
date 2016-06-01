@@ -56,7 +56,8 @@ public class FragmentFolder extends Fragment {
     private ArrayList<IconData> myDataset;
     private File mGalleryFolder;
     private String GALLERY_LOCATION = ".thumbnails";
-    private AdapterImageFolder adapterImageFolder;
+    private AdapterImageFolder[] adapterImageFolder;
+    private AdapterImageFolder adapterImageFolder1;
     LoaderImageFolder loaderImageFolder;
 
 
@@ -64,6 +65,7 @@ public class FragmentFolder extends Fragment {
     public void sortImagePath(Map<String, List<Image>> map) {
         mapSize = map.size();
         hashMap = map;
+        adapterImageFolder = new AdapterImageFolder[mapSize];
         Log.d(TAG, "mapSize : " + mapSize + ", hashMap : " + map);
 
         folderName = new ArrayList<>();
@@ -145,6 +147,7 @@ public class FragmentFolder extends Fragment {
         recyclerViewAbove.setAdapter(adapterFolderAbove);
         recyclerViewMenu.setAdapter(adapterMenu);
 
+
         //"Above" icon touch listener.
         recyclerViewAbove.addOnItemTouchListener(new ListenerOnClick(getActivity(), recyclerViewAbove, new ListenerOnClick.OnItemClickListener() {
 
@@ -152,14 +155,21 @@ public class FragmentFolder extends Fragment {
             public void onItemClick(View view, int position) {
                 // FIXME: 2016. 5. 24. WTF
                 imageFiles = hashMap.get(keyArray.get(position));
-                adapterImageFolder = new AdapterImageFolder(FragmentFolder.this, imageFiles);
-                adapterImageFolder.setOnItemClickListener(new AdapterImageFolder.OnItemClickListener() {
-                    @Override
-                    public void onClick(int position) {
+                if(adapterImageFolder[position] == null){
+                    adapterImageFolder1 = new AdapterImageFolder(FragmentFolder.this, imageFiles);
+                    adapterImageFolder[position] = adapterImageFolder1;
 
-                    }
-                });
-                recyclerViewGallery.setAdapter(adapterImageFolder);
+                    if(LogTag.DEBUG)Log.d("IconClick","Create");
+                }
+                recyclerViewGallery.setAdapter(adapterImageFolder[position]);
+                if(LogTag.DEBUG)Log.d("IconClick","Use");
+
+//                adapterImageFolder.setOnItemClickListener(new AdapterImageFolder.OnItemClickListener() {
+//                    @Override
+//                    public void onClick(int position) {
+//
+//                    }
+//                });
             }
 
             @Override

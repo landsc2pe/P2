@@ -29,13 +29,14 @@ import com.jayjaylab.lesson.gallery.util.LogTag;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static int msn = 1;
+//    private static int msn = 1;
     private final int MY_PERMISSION_REQUEST_STORAGE = 100;
 
     final String TAG = MainActivity.class.getSimpleName();
 
     android.support.v4.app.FragmentManager fragmentManager;
     FragmentFolder fragmentFolder;
+    FragmentTransaction fragmentTransaction;
 
 
     @Override
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.nav_drawer_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.rcvr_tl_tabs);
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
@@ -55,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AdapterViewPager adapter = new AdapterViewPager(getSupportFragmentManager(), tabLayout.getTabCount());
 
         viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout){});
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
+        });
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
             @Override
@@ -86,36 +89,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (msn == 1) {
-//                    tabLayout.removeAllTabs();
-                    Log.d(TAG, "msn == 1");
-//                    if(fragmentFolder == null)
-//                        fragmentFolder = new FragmentFolder();
-//
-//                    fragmentFolder = (FragmentFolder)
-//                            getSupportFragmentManager().findFragmentByTag("ManageFragment");
-//                    if(fragmentFolder == null) {
-//                        fragmentFolder = new FragmentFolder();
-//                    }
+                if (tabLayout.getVisibility() == View.VISIBLE ) {
+                    Log.d(TAG, "INVISIBLE <= VISIBLE");
+                    if (fragmentFolder == null) {
+                        fragmentFolder = new FragmentFolder();
+                        fragmentManager = getSupportFragmentManager();
 
-                    fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.add(R.id.main_layout, fragmentFolder, "ManageFragment");
-//                    fragmentTransaction.addToBackStack("ManageFragment");
-//                    fragmentManager.findFragmentByTag("ManageFragment");
-                    fragmentTransaction.commit();
-                    tabLayout.setVisibility(View.INVISIBLE);
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.add(R.id.main_layout, fragmentFolder);
+                        fragmentTransaction.commit();
+                        tabLayout.setVisibility(View.INVISIBLE);
 
-                    msn++;
+                        if(LogTag.DEBUG)Log.d("FragmentChange", "new");
+                    } else {
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.show(fragmentFolder);
+                        fragmentTransaction.commit();
+                        tabLayout.setVisibility(View.INVISIBLE);
 
-                } else if (msn == 2) {
-                    Log.d(TAG, "msn == 2");
-                    fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.remove(fragmentFolder);
+                        if(LogTag.DEBUG)Log.d("FragmentChange", "else");
+
+                    }
+
+//                    msn++;
+
+                } else if (tabLayout.getVisibility() == View.INVISIBLE) {
+                    Log.d(TAG, "INVISIBLE => VISIBLE");
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.hide(fragmentFolder);
                     fragmentTransaction.commit();
                     tabLayout.setVisibility(View.VISIBLE);
-                    msn--;
+//                    msn--;
                 }
             }
         });
@@ -192,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @TargetApi(Build.VERSION_CODES.M)
 
     private void checkPermission() {
-        if(LogTag.DEBUG)Log.d(TAG, "CheckPermission : " + ActivityCompat.checkSelfPermission(
+        if (LogTag.DEBUG) Log.d(TAG, "CheckPermission : " + ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.WRITE_EXTERNAL_STORAGE));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED
@@ -212,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // app-defined int constant
 
         } else {
-            if(LogTag.DEBUG)Log.d(TAG, "permission is already allowed...");
+            if (LogTag.DEBUG) Log.d(TAG, "permission is already allowed...");
 
         }
     }
@@ -230,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 } else {
 
-                    if(LogTag.DEBUG) Log.d(TAG, "Permission always deny");
+                    if (LogTag.DEBUG) Log.d(TAG, "Permission always deny");
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
