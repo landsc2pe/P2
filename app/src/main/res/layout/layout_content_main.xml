@@ -5,9 +5,12 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_below="@id/toolbar"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.MainActivity"
     tools:showIn="@layout/layout_activity_main">
+
+
 
     <android.support.design.widget.TabLayout
         android:id="@+id/rcvr_tl_tabs"
@@ -15,11 +18,13 @@
         android:layout_height="45dp"
         android:layout_below="@id/toolbar"
         android:background="?attr/colorPrimary"
-        android:elevation="5dp"
+        android:elevation="0dp"
         android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:tabIndicatorColor="@color/colorAccent"
-        app:tabIndicatorHeight="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+        app:tabIndicatorHeight="4dp" />
+
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/rcvr_vp_pager"

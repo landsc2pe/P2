@@ -15,13 +15,13 @@ import android.view.ViewGroup;
 
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.AdapterFolderAbove;
-import com.jayjaylab.lesson.gallery.adapter.AdapterImageFolder;
 import com.jayjaylab.lesson.gallery.adapter.AdapterFolderRight;
+import com.jayjaylab.lesson.gallery.adapter.AdapterImageFolder;
 import com.jayjaylab.lesson.gallery.adapter.frame.IconData;
-import com.jayjaylab.lesson.gallery.util.model.Image;
-import com.jayjaylab.lesson.gallery.util.OnClickListener;
 import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
+import com.jayjaylab.lesson.gallery.util.OnClickListener;
+import com.jayjaylab.lesson.gallery.util.model.Image;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -85,6 +85,7 @@ public class FragmentFolder extends Fragment {
 
         mActivity = getActivity();
         myDataset = new ArrayList<>();
+
 
 
         setIconAndImageMap(map);

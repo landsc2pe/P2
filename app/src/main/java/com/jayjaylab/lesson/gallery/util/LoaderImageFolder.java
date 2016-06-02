@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.jayjaylab.lesson.gallery.activity.MainActivity;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 

@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -35,7 +36,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-//    private static int msn = 1;
+    //    private static int msn = 1;
     private final int MY_PERMISSION_REQUEST_STORAGE = 100;
 
     final String TAG = MainActivity.class.getSimpleName();
@@ -45,13 +46,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FragmentTransaction fragmentTransaction;
     LoaderImageFolder loaderImageFolder;
 
+    AppBarLayout.LayoutParams params;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_drawer_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+
+//        final ActionBar ab = getSupportActionBar();
+////        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+//        ab.setDisplayHomeAsUpEnabled(true);
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.rcvr_tl_tabs);
 
@@ -65,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         loaderImageFolder.imageLoaderByMediaStore(this, new LoaderImageFolder.OnImageLoadListener() {
             @Override
             public void onLoad(Map<String, List<Image>> map) {
-                if(LogTag.DEBUG) Log.d(TAG, "map : " + map);
+                if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
 
 
                 final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
@@ -108,8 +117,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (tabLayout.getVisibility() == View.VISIBLE ) {
+                if (tabLayout.getVisibility() == View.VISIBLE) {
                     Log.d(TAG, "INVISIBLE <= VISIBLE");
+
+                    assert toolbar != null;
+                    params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
+
+                    if (LogTag.DEBUG) Log.d("FragmentChange", "A : "+params.getScrollFlags());
+                    params.setScrollFlags(0);
+                    if (LogTag.DEBUG) Log.d("FragmentChange", "Aa : "+params.getScrollFlags());
+
+
                     if (fragmentFolder == null) {
                         fragmentFolder = new FragmentFolder();
                         fragmentManager = getSupportFragmentManager();
@@ -119,26 +137,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         fragmentTransaction.commit();
                         tabLayout.setVisibility(View.INVISIBLE);
 
-                        if(LogTag.DEBUG)Log.d("FragmentChange", "new");
+                        if (LogTag.DEBUG) Log.d("FragmentChange", "new");
+
                     } else {
+
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.show(fragmentFolder);
                         fragmentTransaction.commit();
                         tabLayout.setVisibility(View.INVISIBLE);
 
-                        if(LogTag.DEBUG)Log.d("FragmentChange", "else");
+                        if (LogTag.DEBUG) Log.d("FragmentChange", "else");
 
                     }
+
 
 //                    msn++;
 
                 } else if (tabLayout.getVisibility() == View.INVISIBLE) {
                     Log.d(TAG, "INVISIBLE => VISIBLE");
+
+                    assert toolbar != null;
+                    params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
+                    if (LogTag.DEBUG) Log.d("FragmentChange", "B : "+params.getScrollFlags());
+                    params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
+                    if (LogTag.DEBUG) Log.d("FragmentChange", "Bb : "+params.getScrollFlags());
+
+
                     fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.hide(fragmentFolder);
                     fragmentTransaction.commit();
                     tabLayout.setVisibility(View.VISIBLE);
 //                    msn--;
+
                 }
             }
         });
