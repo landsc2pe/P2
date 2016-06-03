@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
 
 
+
                 final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
                 AdapterViewPager adapter = new AdapterViewPager(getSupportFragmentManager(), tabLayout.getTabCount());
 
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
             }
-        });
+        }, getApplicationContext());
 
 
         if (LogTag.DEBUG)

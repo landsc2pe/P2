@@ -1,6 +1,7 @@
 package com.jayjaylab.lesson.gallery.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -9,7 +10,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.jayjaylab.lesson.gallery.activity.MainActivity;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
@@ -27,18 +27,24 @@ public class LoaderImageFolder implements OnLoadListener {
     final String TAG = LoaderImageFolder.class.getSimpleName();
     final int LOADER_ID_THUMBNAIL = 0;
     final int LOADER_ID_IMAGE = 1;
+    Context context;
 
     public static Map<String, List<Image>> map;
     public static Thumbnail[] arrayThumbnails;
+    public static SparseArray<Image> arrayImage;
+
+    ArrayList<Integer> sparseKeys;
 
     public android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForOriginalImages;
     public android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForThumbnails;
-    public SparseArray<Image> arrayImage;
+
     OnImageLoadListener onImageLoadListener;
 
-    public void imageLoaderByMediaStore(final Activity activity, OnImageLoadListener listener) {
+    public void imageLoaderByMediaStore(final Activity activity, OnImageLoadListener listener, Context context) {
         loadImageByMediaStore(activity);
         setOnImageLoadListener(listener);
+        this.context = context;
+
     }
 
     public void loadImageByMediaStore(final Activity activity) {
@@ -67,8 +73,9 @@ public class LoaderImageFolder implements OnLoadListener {
                 if (data != null && data.getCount() > 0) {
                     if (LogTag.DEBUG) Log.d(TAG, "count : " + data.getCount());
 
-
+                    sparseKeys = new ArrayList();
                     SparseArray<Image> sparseArrayImage = new SparseArray<>(data.getCount());
+
 
                     data.moveToFirst();
                     while (data.moveToNext()) {
@@ -76,8 +83,15 @@ public class LoaderImageFolder implements OnLoadListener {
                         id = data.getInt(data.getColumnIndex(MediaStore.Images.Media._ID));
                         path = data.getString(data.getColumnIndex(MediaStore.Images.Media.DATA));
 
+
                         sparseArrayImage.append(id, new Image(id, path));
+                        sparseKeys.add(id);
+
+
                     }
+                    if (LogTag.DEBUG) Log.d("SparseArray", " count : " + sparseKeys.size());
+                    for (int i = 0; i < sparseKeys.size(); i++)
+                        if (LogTag.DEBUG) Log.d("SparseArray", " key: " + sparseKeys.get(i));
 
                     if (sparseArrayImage.size() > 0) {
                         onLoadOriginalImages(sparseArrayImage);
@@ -175,14 +189,32 @@ public class LoaderImageFolder implements OnLoadListener {
     public void onLoadOriginalImages(SparseArray<Image> sparseArray) {
         if (LogTag.DEBUG) Log.d(TAG, "images : " + sparseArray + ", # : " + sparseArray.size());
         if (LogTag.DEBUG) Log.d(TAG, "thread2 : " + Thread.currentThread());
-        this.arrayImage = sparseArray;
+        arrayImage = sparseArray;
+//
+//        if(LogTag.DEBUG)Log.d("SparseArray", ""+arrayImage.size());
+//        if(LogTag.DEBUG) for(int i=0; i<sparseArray.size(); i++)Log.d("SparseArray", arrayImage.valueAt(i).getPath());
+
         createMapOfDirectoryImages(arrayImage, arrayThumbnails);
     }
 
     Map<String, List<Image>> createMapOfDirectoryImages(
             SparseArray<Image> arrayImage, Thumbnail[] thumbnails) {
-        if (arrayImage == null || thumbnails == null)
+//
+//        MediaScanner scanner = MediaScanner.newInstance(context);
+//
+//        if (arrayImage != null && thumbnails == null) {
+//
+//            for (Integer keys : sparseKeys) {
+//                scanner.mediaScanning(arrayImage.get(keys).getPath());
+//                if (LogTag.DEBUG)
+//                    Log.d("SparseArray", " key-path: " + arrayImage.get(keys).getPath());
+//            }
+//        }
+
+        if (thumbnails == null || arrayImage ==null) {
             return null;
+        }
+
 
         map = new HashMap<>();
 

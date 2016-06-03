@@ -11,3 +11,4 @@ public interface OnLoadListener {
     void onLoadThumbnails(Thumbnail[] thumbnails);
     void onLoadOriginalImages(SparseArray<Image> images);
 }
+
