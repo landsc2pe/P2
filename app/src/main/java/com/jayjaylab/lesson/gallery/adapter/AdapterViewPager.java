@@ -9,8 +9,11 @@ import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.fragment.FragmentTab1;
 import com.jayjaylab.lesson.gallery.fragment.FragmentTab2;
 import com.jayjaylab.lesson.gallery.util.LogTag;
+import com.jayjaylab.lesson.gallery.util.model.Image;
+import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by HOMIN on 2016-05-25.
@@ -20,11 +23,29 @@ public class AdapterViewPager extends FragmentStatePagerAdapter {
     int _numOfTabs;
 //    List<Fragment> cacheFragment;
     Fragment[] cacheFragment;
+    Map<String, List<Image>> map;
+    Thumbnail[] thumbnails;
 
-    public AdapterViewPager(android.support.v4.app.FragmentManager fm, int numOfTabs) {
+    public AdapterViewPager(android.support.v4.app.FragmentManager fm, int numOfTabs,
+                            Map<String, List<Image>> map, Thumbnail[] thumbnails) {
         super(fm);
         this._numOfTabs = numOfTabs;
         cacheFragment = new Fragment[numOfTabs];
+        this.map = map;
+        this.thumbnails = thumbnails;
+    }
+
+    public void setDataSet(Map<String, List<Image>> map, Thumbnail[] thumbnails) {
+        this.map = map;
+        this.thumbnails = thumbnails;
+    }
+
+    public void setMap(Map<String, List<Image>> map) {
+        this.map = map;
+    }
+
+    public void setThumbnails(Thumbnail[] thumbnails) {
+        this.thumbnails = thumbnails;
     }
 
     @Override
@@ -37,6 +58,7 @@ public class AdapterViewPager extends FragmentStatePagerAdapter {
                 if(cacheFragment[position] == null) {
                     Log.d(TAG, "cache miss.");
                     fragment = new FragmentTab1(); // Fragment 는 알아서 만들자
+                    ((FragmentTab1)fragment).setImages(thumbnails);
                     cacheFragment[position] = fragment;
                 } else {
                     Log.d(TAG, "cache hit.");

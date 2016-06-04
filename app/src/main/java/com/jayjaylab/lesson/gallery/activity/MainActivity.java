@@ -30,6 +30,7 @@ import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
+import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
 import java.util.List;
 import java.util.Map;
@@ -73,15 +74,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         loaderImageFolder = new LoaderImageFolder();
         loaderImageFolder.imageLoaderByMediaStore(this, new LoaderImageFolder.OnImageLoadListener() {
             @Override
-            public void onLoad(Map<String, List<Image>> map) {
+            public void onLoad(Map<String, List<Image>> map, Thumbnail[] thumbnails) {
                 if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
 
-
-
                 final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
-                AdapterViewPager adapter = new AdapterViewPager(getSupportFragmentManager(), tabLayout.getTabCount());
+                AdapterViewPager adapter = new AdapterViewPager
+                        (getSupportFragmentManager(), tabLayout.getTabCount(),
+                                map, thumbnails);
+//                adapter.setDataSet(map, thumbnails);
 
-                assert viewPager != null;
                 viewPager.setAdapter(adapter);
                 viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
                 });

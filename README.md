@@ -45,6 +45,11 @@ Map<String, List<String>> directoryMapping; 은 아래와 같은 테이블을 �
 * Integer, Float, Long, Double 을 type parameter로 하는 Calculator Class 만들기
   * 덧셋, 뺄셈, 곱셈, 나눕셈 메소드 만들기.
 
+### RecyclerView animations
+* <https://github.com/wasabeef/recyclerview-animators>
+* <https://github.com/cymcsg/UltimateRecyclerView>
+* <https://github.com/gabrielemariotti/RecyclerViewItemAnimators>
+
 # 읽을 책
 * 객체지향 관련된 책
 * 디자인 패턴

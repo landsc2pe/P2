@@ -37,16 +37,18 @@ public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String path = imagesFile[position].getPath();
-        if(LogTag.DEBUG) Log.d("ImagePath",path);
+        if(imagesFile[position] != null) {
+            String path = imagesFile[position].getPath();
+            if (LogTag.DEBUG) Log.d("ImagePath", path);
 
-        Glide.with(fragment)
-                .load(path)
-                .override(200,200)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .thumbnail(0.3f)
-                .centerCrop()
-                .into(holder.imageView);
+            Glide.with(fragment)
+                    .load(path)
+                    .override(200, 200)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(0.3f)
+                    .centerCrop()
+                    .into(holder.imageView);
+        }
 
     }
 

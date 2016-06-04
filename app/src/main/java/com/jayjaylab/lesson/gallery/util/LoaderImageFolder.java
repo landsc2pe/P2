@@ -250,13 +250,13 @@ public class LoaderImageFolder implements OnLoadListener {
         }
 
         if (onImageLoadListener != null) {
-            onImageLoadListener.onLoad(map);
+            onImageLoadListener.onLoad(map, thumbnails);
         }
 
         return map;
     }
 
     public interface OnImageLoadListener {
-        void onLoad(Map<String, List<Image>> map);
+        void onLoad(Map<String, List<Image>> map, Thumbnail[] thumbnails);
     }
 }
