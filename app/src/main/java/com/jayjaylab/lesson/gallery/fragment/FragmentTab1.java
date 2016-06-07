@@ -26,7 +26,7 @@ public class FragmentTab1 extends Fragment {
     public static final String TAG = FragmentTab1.class.getSimpleName();
     private RecyclerView fragmentTab1;
     private GridLayoutManager layoutManager;
-    Thumbnail[] thumbnails;
+    List<Thumbnail> thumbnails;
 
     public static FragmentTab1 newInstance(Map<String, List<Image>> map) {
         Bundle args = new Bundle();
@@ -54,13 +54,13 @@ public class FragmentTab1 extends Fragment {
         Log.d(TAG, "arrayThumbnail : " + thumbnails);
 
         fragmentTab1.setHasFixedSize(true);
-        layoutManager = new GridLayoutManager(getContext(), 4);
+        layoutManager = new GridLayoutManager(getContext(), 5);
 
         fragmentTab1.setLayoutManager(layoutManager);
         fragmentTab1.setAdapter(new AdapterImageTab1(this, thumbnails));
     }
 
-    public void setImages(Thumbnail[] thumbnails) {
+    public void setImages(List<Thumbnail> thumbnails) {
         this.thumbnails = thumbnails;
     }
 

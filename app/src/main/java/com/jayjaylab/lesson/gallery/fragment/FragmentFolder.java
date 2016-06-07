@@ -29,8 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.jayjaylab.lesson.gallery.util.LoaderImageFolder.map;
-
 /**
  * Created by Homin on 2016-04-07.
  */
@@ -86,9 +84,7 @@ public class FragmentFolder extends Fragment {
         mActivity = getActivity();
         myDataset = new ArrayList<>();
 
-
-
-        setIconAndImageMap(map);
+        setIconAndImageMap(LoaderImageFolder.map);
 //        loaderImageFolder = new LoaderImageFolder();
 
 //        loaderImageFolder.setOnImageLoadListener(new LoaderImageFolder.OnImageLoadListener() {

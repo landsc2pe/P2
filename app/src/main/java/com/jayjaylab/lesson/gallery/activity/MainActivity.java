@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -57,30 +59,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Permission Check with CursorLoader execute.
+        checkPermission();
 
-
-//        final ActionBar ab = getSupportActionBar();
-////        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-//        ab.setDisplayHomeAsUpEnabled(true);
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.rcvr_tl_tabs);
 
-        assert tabLayout != null;
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-        tabLayout.addTab(tabLayout.newTab());
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        if (tabLayout != null) {
+            tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
+            tabLayout.addTab(tabLayout.newTab());
+            tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        }
 
         loaderImageFolder = new LoaderImageFolder();
-        loaderImageFolder.imageLoaderByMediaStore(this, new LoaderImageFolder.OnImageLoadListener() {
+        LoaderImageFolder.OnImageLoadListener listener = new LoaderImageFolder.OnImageLoadListener() {
             @Override
-            public void onLoad(Map<String, List<Image>> map, Thumbnail[] thumbnails) {
+            public void onLoad(Map<String, List<Image>> map, SparseArray<Thumbnail> thumbnails, ArrayList<Integer> sparseKeys) {
                 if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
+
+                List<Thumbnail> thumbArray = new ArrayList<>();
+                for(Integer keys : sparseKeys){
+                    thumbArray.add(thumbnails.get(keys));
+                }
+
+
 
                 final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
                 AdapterViewPager adapter = new AdapterViewPager
                         (getSupportFragmentManager(), tabLayout.getTabCount(),
-                                map, thumbnails);
+                                map, thumbArray);
 //                adapter.setDataSet(map, thumbnails);
 
                 viewPager.setAdapter(adapter);
@@ -105,75 +113,70 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
             }
-        }, getApplicationContext());
+        };
+        loaderImageFolder.imageLoaderByMediaStore(this, listener, getApplicationContext());
 
 
         if (LogTag.DEBUG)
             Log.d(TAG, "externalCacheDir : " + getExternalCacheDir() + ", internalCacheDir : " + getCacheDir());
 
-        //Permission Check with CursorLoader execute.
-        checkPermission();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (tabLayout.getVisibility() == View.VISIBLE) {
-                    Log.d(TAG, "INVISIBLE <= VISIBLE");
+        if (fab != null)
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (tabLayout.getVisibility() == View.VISIBLE) {
+                        Log.d(TAG, "INVISIBLE <= VISIBLE");
 
-                    assert toolbar != null;
-                    params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-
-                    if (LogTag.DEBUG) Log.d("FragmentChange", "A : "+params.getScrollFlags());
-                    params.setScrollFlags(0);
-                    if (LogTag.DEBUG) Log.d("FragmentChange", "Aa : "+params.getScrollFlags());
+                        params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
 
 
-                    if (fragmentFolder == null) {
-                        fragmentFolder = new FragmentFolder();
-                        fragmentManager = getSupportFragmentManager();
+                        if (fragmentFolder == null) {
+                            fragmentFolder = new FragmentFolder();
+                            fragmentManager = getSupportFragmentManager();
 
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.add(R.id.main_layout, fragmentFolder);
-                        fragmentTransaction.commit();
-                        tabLayout.setVisibility(View.INVISIBLE);
+                            fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.add(R.id.main_layout, fragmentFolder);
+                            fragmentTransaction.commit();
+                            tabLayout.setVisibility(View.INVISIBLE);
 
-                        if (LogTag.DEBUG) Log.d("FragmentChange", "new");
+                            if (LogTag.DEBUG) Log.d("FragmentChange", "new");
 
-                    } else {
+                        } else {
 
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.show(fragmentFolder);
-                        fragmentTransaction.commit();
-                        tabLayout.setVisibility(View.INVISIBLE);
+                            fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.show(fragmentFolder);
+                            fragmentTransaction.commit();
+                            tabLayout.setVisibility(View.INVISIBLE);
 
-                        if (LogTag.DEBUG) Log.d("FragmentChange", "else");
+                            if (LogTag.DEBUG) Log.d("FragmentChange", "else");
 
-                    }
+                        }
 
 
 //                    msn++;
 
-                } else if (tabLayout.getVisibility() == View.INVISIBLE) {
-                    Log.d(TAG, "INVISIBLE => VISIBLE");
+                    } else if (tabLayout.getVisibility() == View.INVISIBLE) {
+                        Log.d(TAG, "INVISIBLE => VISIBLE");
 
-                    assert toolbar != null;
-                    params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-                    if (LogTag.DEBUG) Log.d("FragmentChange", "B : "+params.getScrollFlags());
-                    params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
-                    if (LogTag.DEBUG) Log.d("FragmentChange", "Bb : "+params.getScrollFlags());
+                        assert toolbar != null;
+                        params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
+                        if (LogTag.DEBUG) Log.d("FragmentChange", "B : " + params.getScrollFlags());
+                        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
+                        if (LogTag.DEBUG)
+                            Log.d("FragmentChange", "Bb : " + params.getScrollFlags());
 
 
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.hide(fragmentFolder);
-                    fragmentTransaction.commit();
-                    tabLayout.setVisibility(View.VISIBLE);
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.hide(fragmentFolder);
+                        fragmentTransaction.commit();
+                        tabLayout.setVisibility(View.VISIBLE);
 //                    msn--;
 
+                    }
                 }
-            }
-        });
+            });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -293,11 +296,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
     }
-
-
-//    void getImageUriInBackground() {
-//        getLoaderManager().initLoader(LOADER_ID_THUMBNAIL, null, loaderImage.getLoaderCallbacksForThumbnails());
-//        getLoaderManager().initLoader(LOADER_ID_IMAGE, null, loaderImage.getLoaderCallbacksForOriginalImages());
-//    }
 
 }

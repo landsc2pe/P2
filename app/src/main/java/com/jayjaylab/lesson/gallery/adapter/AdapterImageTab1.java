@@ -14,15 +14,17 @@ import com.jayjaylab.lesson.gallery.fragment.FragmentTab1;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
+import java.util.List;
+
 /**
  * Created by HOMIN on 2016-05-27.
  */
 public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
     FragmentTab1 fragment;
-    Thumbnail[] imagesFile;
+    List<Thumbnail> imagesFile;
 
-    //// TODO: 2016-05-26 add data arg. 
-    public AdapterImageTab1(FragmentTab1 fragment, Thumbnail[] thumbnails){
+    // TODO : get map!
+    public AdapterImageTab1(FragmentTab1 fragment, List<Thumbnail> thumbnails){
         this.fragment = fragment;
         imagesFile = thumbnails;
 
@@ -37,8 +39,8 @@ public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if(imagesFile[position] != null) {
-            String path = imagesFile[position].getPath();
+        if(imagesFile != null) {
+            String path = imagesFile.get(position).getPath();
             if (LogTag.DEBUG) Log.d("ImagePath", path);
 
             Glide.with(fragment)
@@ -50,10 +52,11 @@ public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
                     .into(holder.imageView);
         }
 
+
     }
 
     @Override
     public int getItemCount() {
-        return imagesFile.length;
+        return imagesFile.size();
     }
 }

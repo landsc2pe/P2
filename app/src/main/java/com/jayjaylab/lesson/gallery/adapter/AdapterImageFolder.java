@@ -42,7 +42,6 @@ public class AdapterImageFolder extends RecyclerView.Adapter<ViewHolder> {
 
     }
 
-
     public void setOnItemClickListener(OnItemClickListener listener) {
         onItemClickListener = listener;
     }
@@ -56,16 +55,31 @@ public class AdapterImageFolder extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String path = imagesFile.get(position).getThumbnail().getPath();
-        if(LogTag.DEBUG)Log.d("ImagePath",path);
+        try {
+            String path = imagesFile.get(position).getThumbnail().getPath();
+            if (LogTag.DEBUG) Log.d("ImagePath", path);
 
-        Glide.with(fragment)
-                .load(path)
-                .override(200,200)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .thumbnail(0.3f)
-                .centerCrop()
-                .into(holder.imageView);
+            Glide.with(fragment)
+                    .load(path)
+                    .override(200, 200)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(0.3f)
+                    .centerCrop()
+                    .into(holder.imageView);
+
+        } catch (Exception e) {
+
+            String path = imagesFile.get(position).getPath();
+
+            Glide.with(fragment)
+                    .load(path)
+                    .override(200, 200)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(0.3f)
+                    .centerCrop()
+                    .into(holder.imageView);
+        }
+
     }
 
 //    @Override
@@ -114,10 +128,10 @@ public class AdapterImageFolder extends RecyclerView.Adapter<ViewHolder> {
                 @Override
                 public boolean onException(Exception e, Uri file, Target<GlideDrawable> target,
                                            boolean isFirstResource) {
-                    if(LogTag.DEBUG)if (LogTag.DEBUG) Log.d(TAG, ", file : " +
+                    if (LogTag.DEBUG) if (LogTag.DEBUG) Log.d(TAG, ", file : " +
                             file +
                             ", target : " + target + ", isFirstResource : " + isFirstResource);
-                    if(LogTag.DEBUG)if (e != null) {
+                    if (LogTag.DEBUG) if (e != null) {
                         e.printStackTrace();
                     }
                     return false;
@@ -127,7 +141,7 @@ public class AdapterImageFolder extends RecyclerView.Adapter<ViewHolder> {
                 public boolean onResourceReady(GlideDrawable glideDrawable, Uri file,
                                                Target<GlideDrawable> target, boolean isFromMemoryCache,
                                                boolean isFirstResource) {
-                    if(LogTag.DEBUG)Log.d(TAG, "onResourceReady() : file : " + file +
+                    if (LogTag.DEBUG) Log.d(TAG, "onResourceReady() : file : " + file +
                             ", target : " + target +
                             ", isFromMemoryCache : " + isFromMemoryCache +
                             ", isFirstResource : " + isFirstResource);

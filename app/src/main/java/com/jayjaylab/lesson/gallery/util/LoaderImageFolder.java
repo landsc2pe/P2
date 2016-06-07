@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by jjkim on 2016. 5. 21..
@@ -27,18 +26,30 @@ public class LoaderImageFolder implements OnLoadListener {
     final String TAG = LoaderImageFolder.class.getSimpleName();
     final int LOADER_ID_THUMBNAIL = 0;
     final int LOADER_ID_IMAGE = 1;
-    Context context;
+
 
     public static Map<String, List<Image>> map;
-    public static Thumbnail[] arrayThumbnails;
-    public static SparseArray<Image> arrayImage;
-
+    SparseArray<Thumbnail> arrayThumbnails;
+    SparseArray<Image> arrayImage;
     ArrayList<Integer> sparseKeys;
 
-    public android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForOriginalImages;
-    public android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForThumbnails;
 
+    Context context;
     OnImageLoadListener onImageLoadListener;
+    android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForOriginalImages;
+    android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForThumbnails;
+
+
+    public interface OnImageLoadListener {
+        void onLoad(Map<String, List<Image>> map, SparseArray<Thumbnail> thumbnails, ArrayList<Integer> sparseKeys);
+    }
+
+
+    public void setOnImageLoadListener(OnImageLoadListener listener) {
+        onImageLoadListener = listener;
+
+    }
+
 
     public void imageLoaderByMediaStore(final Activity activity, OnImageLoadListener listener, Context context) {
         loadImageByMediaStore(activity);
@@ -49,6 +60,7 @@ public class LoaderImageFolder implements OnLoadListener {
 
     public void loadImageByMediaStore(final Activity activity) {
         Log.d(TAG, "loadImageByMediaStore() : activity : " + activity);
+
 
         loaderCallbacksForOriginalImages = new android.app.LoaderManager.LoaderCallbacks<Cursor>() {
 
@@ -130,12 +142,11 @@ public class LoaderImageFolder implements OnLoadListener {
             public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
                 String path;
                 int id, imageId;
-                int count = 0;
 
                 if (data != null && data.getCount() > 0) {
                     if (LogTag.DEBUG) Log.d(TAG, "count : " + data.getCount());
 
-                    Thumbnail[] thumbnails = new Thumbnail[data.getCount()];
+                    SparseArray<Thumbnail> thumbnails = new SparseArray<>();
 
                     data.moveToFirst();
                     while (data.moveToNext()) {
@@ -146,11 +157,11 @@ public class LoaderImageFolder implements OnLoadListener {
                                 .IMAGE_ID));
 
 //                    if(LogTag.DEBUG)Log.d(TAG, "id : " + id + ", imageId : " + imageId + ", path : " + path);
-                        thumbnails[count] = new Thumbnail(id, imageId, path);
-                        count++;
+
+                        thumbnails.append(imageId, new Thumbnail(id, imageId, path));
                     }
 
-                    if (thumbnails.length > 0) {
+                    if (thumbnails.size() > 0) {
                         onLoadThumbnails(thumbnails);
                     }
                 }
@@ -164,25 +175,23 @@ public class LoaderImageFolder implements OnLoadListener {
             }
         };
 
-        activity.getLoaderManager().initLoader(LOADER_ID_THUMBNAIL, null, loaderCallbacksForThumbnails);
+
         activity.getLoaderManager().initLoader(LOADER_ID_IMAGE, null, loaderCallbacksForOriginalImages);
-    }
+        activity.getLoaderManager().initLoader(LOADER_ID_THUMBNAIL, null, loaderCallbacksForThumbnails);
 
 
-    public void setOnImageLoadListener(OnImageLoadListener listener) {
-        onImageLoadListener = listener;
     }
 
 
     // TODO: 2016-05-18 ASK: why does it load Method two times.
 
     @Override
-    public void onLoadThumbnails(Thumbnail[] thumbnails) {
+    public void onLoadThumbnails(SparseArray<Thumbnail> thumbnails) {
         if (LogTag.DEBUG)
-            Log.d(TAG, "arrayThumbnails : " + thumbnails + ", # : " + thumbnails.length);
+            Log.d(TAG, "arrayThumbnails : " + thumbnails + ", # : " + thumbnails.size());
         if (LogTag.DEBUG) Log.d(TAG, "thread1 : " + Thread.currentThread());
         arrayThumbnails = thumbnails;
-        createMapOfDirectoryImages(arrayImage, arrayThumbnails);
+        MapData(arrayImage, arrayThumbnails);
     }
 
     @Override
@@ -194,69 +203,73 @@ public class LoaderImageFolder implements OnLoadListener {
 //        if(LogTag.DEBUG)Log.d("SparseArray", ""+arrayImage.size());
 //        if(LogTag.DEBUG) for(int i=0; i<sparseArray.size(); i++)Log.d("SparseArray", arrayImage.valueAt(i).getPath());
 
-        createMapOfDirectoryImages(arrayImage, arrayThumbnails);
+        MapData(arrayImage, arrayThumbnails);
     }
 
-    Map<String, List<Image>> createMapOfDirectoryImages(
-            SparseArray<Image> arrayImage, Thumbnail[] thumbnails) {
-//
-//        MediaScanner scanner = MediaScanner.newInstance(context);
-//
-//        if (arrayImage != null && thumbnails == null) {
-//
-//            for (Integer keys : sparseKeys) {
-//                scanner.mediaScanning(arrayImage.get(keys).getPath());
-//                if (LogTag.DEBUG)
-//                    Log.d("SparseArray", " key-path: " + arrayImage.get(keys).getPath());
-//            }
-//        }
+    Map<String, List<Image>> MapData(
+            SparseArray<Image> arrayImage, SparseArray<Thumbnail> thumbnails) {
 
-        if (thumbnails == null || arrayImage ==null) {
+
+        if (arrayImage == null || thumbnails == null) {
             return null;
         }
 
-
         map = new HashMap<>();
 
-        for (Thumbnail thumbnail : thumbnails) {
-//            if(LogTag.DEBUG)Log.d(TAG, "thumbnail : " + thumbnail);
+        for (Integer keys : sparseKeys) {
+            Image originalImage = arrayImage.get(keys);
+            Thumbnail thumbnail = thumbnails.get(keys);
 
-            // FIXME: 2016. 5. 17. why is thumbnail null????  => Fixed (Switched row)
-            if (thumbnail != null) {
-                Image originalImage = arrayImage.get(thumbnail.getImageId());
-                if (originalImage != null) {
-                    originalImage.setThumbnail(thumbnail);
-//                    if(LogTag.DEBUG)Log.d(TAG, "originalImage : " + originalImage);
+            originalImage.setThumbnail(thumbnail);
 
-                    //extract folder path.
-                    String parent = new File(originalImage.getPath()).getParent();
+            String parent = new File(originalImage.getPath()).getParent();
 
-                    //mapping
-                    if (map.containsKey(parent)) {
-                        List<Image> list = map.get(parent);
-                        list.add(originalImage);
-                    } else {
-                        List<Image> list = new ArrayList<>(10);
-                        list.add(originalImage);
-                        map.put(parent, list);
-                    }
-                }
+            if (map.containsKey(parent)) {
+                List<Image> list = map.get(parent);
+                list.add(originalImage);
+            } else {
+                List<Image> list = new ArrayList<>();
+                list.add(originalImage);
+                map.put(parent, list);
             }
+
         }
 
-        Set<Map.Entry<String, List<Image>>> entrySet = map.entrySet();
-        for (Map.Entry entry : entrySet) {
-//            if(LogTag.DEBUG)Log.d(TAG, "key : " + entry.getKey() + ", values : " + entry.getValue());
-        }
+
+//
+//        for (Thumbnail thumbnail : thumbnails) {
+////            if(LogTag.DEBUG)Log.d(TAG, "thumbnail : " + thumbnail);
+//
+//            // FIXME: 2016. 5. 17. why is thumbnail null????  => Fixed (Switched row)
+//            if (thumbnail != null) {
+//                Image originalImage = arrayImage.get(thumbnail.getImageId());
+//                if (originalImage != null) {
+//                    originalImage.setThumbnail(thumbnail);
+////                    if(LogTag.DEBUG)Log.d(TAG, "originalImage : " + originalImage);
+//
+//                    //extract folder path.
+//                    String parent = new File(originalImage.getPath()).getParent();
+//
+//                    //mapping
+//                    if (map.containsKey(parent)) {
+//                        List<Image> list = map.get(parent);
+//                        list.add(originalImage);
+//                    } else {
+//                        List<Image> list = new ArrayList<>(10);
+//                        list.add(originalImage);
+//                        map.put(parent, list);
+//                    }
+//                }
+//            }
+//        }
 
         if (onImageLoadListener != null) {
-            onImageLoadListener.onLoad(map, thumbnails);
+            onImageLoadListener.onLoad(map, thumbnails, sparseKeys);
         }
 
-        return map;
-    }
 
-    public interface OnImageLoadListener {
-        void onLoad(Map<String, List<Image>> map, Thumbnail[] thumbnails);
+        return map;
+
+
     }
 }
