@@ -216,9 +216,11 @@ public class LoaderImageFolder implements OnLoadListener {
 
         map = new HashMap<>();
 
+        List<Image> images = new ArrayList<Image>(arrayImage.size());
         for (Integer keys : sparseKeys) {
             Image originalImage = arrayImage.get(keys);
             Thumbnail thumbnail = thumbnails.get(keys);
+            images.add(originalImage);
 
             originalImage.setThumbnail(thumbnail);
 
@@ -235,35 +237,9 @@ public class LoaderImageFolder implements OnLoadListener {
 
         }
 
-
-//
-//        for (Thumbnail thumbnail : thumbnails) {
-////            if(LogTag.DEBUG)Log.d(TAG, "thumbnail : " + thumbnail);
-//
-//            // FIXME: 2016. 5. 17. why is thumbnail null????  => Fixed (Switched row)
-//            if (thumbnail != null) {
-//                Image originalImage = arrayImage.get(thumbnail.getImageId());
-//                if (originalImage != null) {
-//                    originalImage.setThumbnail(thumbnail);
-////                    if(LogTag.DEBUG)Log.d(TAG, "originalImage : " + originalImage);
-//
-//                    //extract folder path.
-//                    String parent = new File(originalImage.getPath()).getParent();
-//
-//                    //mapping
-//                    if (map.containsKey(parent)) {
-//                        List<Image> list = map.get(parent);
-//                        list.add(originalImage);
-//                    } else {
-//                        List<Image> list = new ArrayList<>(10);
-//                        list.add(originalImage);
-//                        map.put(parent, list);
-//                    }
-//                }
-//            }
-//        }
-
         if (onImageLoadListener != null) {
+            // TODO: 2016. 6. 7.
+//            onImageLoadListener.onLoad(map, images, sparseKeys);
             onImageLoadListener.onLoad(map, thumbnails, sparseKeys);
         }
 

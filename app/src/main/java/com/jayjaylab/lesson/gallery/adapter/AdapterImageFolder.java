@@ -55,30 +55,51 @@ public class AdapterImageFolder extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        try {
-            String path = imagesFile.get(position).getThumbnail().getPath();
-            if (LogTag.DEBUG) Log.d("ImagePath", path);
+        Image image = imagesFile.get(position);
+        String imagePath = image.getThumbnail().getPath();
 
+        if(imagePath == null) {
+            imagePath = image.getPath();
+        }
+
+        if (LogTag.DEBUG) Log.d("ImagePath", imagePath);
+
+        if(imagePath == null) {
+            // shows WTF!
+        } else {
             Glide.with(fragment)
-                    .load(path)
-                    .override(200, 200)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .thumbnail(0.3f)
-                    .centerCrop()
-                    .into(holder.imageView);
-
-        } catch (Exception e) {
-
-            String path = imagesFile.get(position).getPath();
-
-            Glide.with(fragment)
-                    .load(path)
+                    .load(imagePath)
                     .override(200, 200)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .thumbnail(0.3f)
                     .centerCrop()
                     .into(holder.imageView);
         }
+
+//        try {
+//            String path = imagesFile.get(position).getThumbnail().getPath();
+//            if (LogTag.DEBUG) Log.d("ImagePath", path);
+//
+//            Glide.with(fragment)
+//                    .load(path)
+//                    .override(200, 200)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .thumbnail(0.3f)
+//                    .centerCrop()
+//                    .into(holder.imageView);
+//
+//        } catch (Exception e) {
+//
+//            String path = imagesFile.get(position).getPath();
+//
+//            Glide.with(fragment)
+//                    .load(path)
+//                    .override(200, 200)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .thumbnail(0.3f)
+//                    .centerCrop()
+//                    .into(holder.imageView);
+//        }
 
     }
 

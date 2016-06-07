@@ -33,22 +33,7 @@ public class AdapterViewPager extends FragmentStatePagerAdapter {
         this.map = map;
         this.thumbnails = thumbnails;
         cacheFragment = new Fragment[numOfTabs];
-
     }
-
-    public void setDataSet(Map<String, List<Image>> map, List<Thumbnail> thumbnails) {
-        this.map = map;
-        this.thumbnails = thumbnails;
-    }
-
-    public void setMap(Map<String, List<Image>> map) {
-        this.map = map;
-    }
-
-    public void setThumbnails(List<Thumbnail> thumbnails) {
-        this.thumbnails = thumbnails;
-    }
-
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
@@ -63,48 +48,11 @@ public class AdapterViewPager extends FragmentStatePagerAdapter {
             if (position == 1) fragment = new FragmentTab2();
             if (position == 2) fragment = new FragmentTab3();
 
-
             cacheFragment[position] = fragment;
         } else {
             Log.d(TAG, "cache hit.");
             fragment = cacheFragment[position];
         }
-
-//        switch (position) {
-//            case 0:
-//                if(LogTag.DEBUG) Log.d(TAG, "getItem() : position : " + position);
-//                if(cacheFragment[position] == null) {
-//                    Log.d(TAG, "cache miss.");
-//                    fragment = new FragmentTab1();
-//                    ((FragmentTab1)fragment).setImages(thumbnails);
-//                    cacheFragment[position] = fragment;
-//                } else {
-//                    Log.d(TAG, "cache hit.");
-//                    fragment = cacheFragment[position];
-//                }
-//            case 1:
-//                if(LogTag.DEBUG) Log.d(TAG, "getItem() : position : " + position);
-//
-//                if(cacheFragment[position] == null) {
-//                    Log.d(TAG, "cache miss.");
-//                    fragment = new FragmentTab2();
-//                    cacheFragment[position] = fragment;
-//                } else {
-//                    Log.d(TAG, "cache hit.");
-//                    fragment = cacheFragment[position];
-//                }
-//            case 2:
-//                if(LogTag.DEBUG) Log.d(TAG, "getItem() : position : " + position);
-//
-//                if(cacheFragment[position] == null) {
-//                    Log.d(TAG, "cache miss.");
-//                    fragment = new FragmentTab3();
-//                    cacheFragment[position] = fragment;
-//                } else {
-//                    Log.d(TAG, "cache hit.");
-//                    fragment = cacheFragment[position];
-//                }
-//        }
 
         return fragment;
 

@@ -1,12 +1,19 @@
 package com.jayjaylab.lesson.gallery.util.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by jjkim on 2016. 5. 17..
  */
-public class Thumbnail {
+public class Thumbnail implements Parcelable {
     int id;
     int imageId;
     String path;
+
+    public Thumbnail(Parcel in) {
+        readFromParcel(in);
+    }
 
     public Thumbnail(int id, int imageId, String path) {
         this.id = id;
@@ -49,4 +56,35 @@ public class Thumbnail {
                 ", path : " + path +
                 "}";
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(imageId);
+        dest.writeString(path);
+    }
+
+    protected void readFromParcel(Parcel in) {
+        id = in.readInt();
+        imageId = in.readInt();
+        path = in.readString();
+    }
+
+    public static final Parcelable.Creator<Thumbnail> CREATOR =
+            new Parcelable.Creator<Thumbnail>() {
+                @Override
+                public Thumbnail createFromParcel(Parcel source) {
+                    return new Thumbnail(source);
+                }
+
+                @Override
+                public Thumbnail[] newArray(int size) {
+                    return new Thumbnail[size];
+                }
+            };
 }

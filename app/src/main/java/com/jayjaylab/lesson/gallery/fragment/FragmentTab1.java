@@ -1,6 +1,7 @@
 package com.jayjaylab.lesson.gallery.fragment;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,6 +15,7 @@ import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.AdapterImageTab1;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
+import org.parceler.Parcels;
 
 import java.util.List;
 import java.util.Map;
@@ -26,11 +28,17 @@ public class FragmentTab1 extends Fragment {
     public static final String TAG = FragmentTab1.class.getSimpleName();
     private RecyclerView fragmentTab1;
     private GridLayoutManager layoutManager;
+    List<Image> images;
     List<Thumbnail> thumbnails;
 
-    public static FragmentTab1 newInstance(Map<String, List<Image>> map) {
+    public static FragmentTab1 newInstance(Thumbnail thumbail,
+                                           Map<String, List<Image>> map) {
         Bundle args = new Bundle();
 
+        // TODO: 2016. 6. 7.
+        Parcelable mapParcelable = Parcels.wrap(map);
+        args.putParcelable("thumbnail", thumbail);
+        args.putParcelable("map", mapParcelable);
         FragmentTab1 fragment = new FragmentTab1();
         fragment.setArguments(args);
         return fragment;
