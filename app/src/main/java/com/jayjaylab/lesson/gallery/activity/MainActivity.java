@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (tabLayout != null) {
             tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-            tabLayout.addTab(tabLayout.newTab());
+            tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
             tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
             tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         }
@@ -296,5 +296,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
     }
+
+
 
 }

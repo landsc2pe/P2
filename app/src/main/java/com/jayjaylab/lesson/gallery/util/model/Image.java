@@ -1,11 +1,9 @@
 package com.jayjaylab.lesson.gallery.util.model;
 
-import org.parceler.Parcel;
-
 /**
  * Created by jjkim on 2016. 5. 17..
  */
-@Parcel
+
 public class Image {
     int id;
     String path;

@@ -13,10 +13,10 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     public ImageView imageView;
     public View rootLayout;
 
-    public ViewHolder(View view) {
-        super(view);
+    public ViewHolder(View v) {
+        super(v);
 
-        rootLayout = view.findViewById(R.id.rootlayout);
-        imageView = (ImageView) view.findViewById(R.id.item_img);
+        rootLayout = v.findViewById(R.id.rootlayout);
+        imageView = (ImageView) v.findViewById(R.id.item_img);
     }
 }
