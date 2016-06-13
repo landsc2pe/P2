@@ -58,7 +58,7 @@ public class AdapterImageTab2 extends RecyclerView.Adapter<RecyclerView.ViewHold
                 viewHolder = new ViewHolder1(v1);
                 break;
             case IMAGE:
-                View v2 = inflater.inflate(R.layout.Image_item_holder_tab2, viewGroup, false);
+                View v2 = inflater.inflate(R.layout.image_item_holder_tab2, viewGroup, false);
                 viewHolder = new ViewHolder2(v2);
                 break;
             default:

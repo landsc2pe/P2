@@ -15,8 +15,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.frame.ViewHolder;
-import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.util.LogTag;
+import com.jayjaylab.lesson.gallery.util.model.Image;
 
 import java.util.List;
 
@@ -55,51 +55,51 @@ public class AdapterImageFolder extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Image image = imagesFile.get(position);
-        String imagePath = image.getThumbnail().getPath();
-
-        if(imagePath == null) {
-            imagePath = image.getPath();
-        }
-
-        if (LogTag.DEBUG) Log.d("ImagePath", imagePath);
-
-        if(imagePath == null) {
-            // shows WTF!
-        } else {
-            Glide.with(fragment)
-                    .load(imagePath)
-                    .override(200, 200)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .thumbnail(0.3f)
-                    .centerCrop()
-                    .into(holder.imageView);
-        }
-
-//        try {
-//            String path = imagesFile.get(position).getThumbnail().getPath();
-//            if (LogTag.DEBUG) Log.d("ImagePath", path);
+//        Image image = imagesFile.get(position);
+//        String imagePath = image.getThumbnail().getPath();
 //
+//        if(imagePath == null) {
+//            imagePath = image.getPath();
+//        }
+//
+//        if (LogTag.DEBUG) Log.d("ImagePath", imagePath);
+//
+//        if(imagePath == null) {
+//
+//        } else {
 //            Glide.with(fragment)
-//                    .load(path)
-//                    .override(200, 200)
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                    .thumbnail(0.3f)
-//                    .centerCrop()
-//                    .into(holder.imageView);
-//
-//        } catch (Exception e) {
-//
-//            String path = imagesFile.get(position).getPath();
-//
-//            Glide.with(fragment)
-//                    .load(path)
+//                    .load(imagePath)
 //                    .override(200, 200)
 //                    .diskCacheStrategy(DiskCacheStrategy.ALL)
 //                    .thumbnail(0.3f)
 //                    .centerCrop()
 //                    .into(holder.imageView);
 //        }
+
+        try {
+            String path = imagesFile.get(position).getThumbnail().getPath();
+            if (LogTag.DEBUG) Log.d("ImagePath", path);
+
+            Glide.with(fragment)
+                    .load(path)
+                    .override(200, 200)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(0.3f)
+                    .centerCrop()
+                    .into(holder.imageView);
+
+        } catch (Exception e) {
+
+            String path = imagesFile.get(position).getPath();
+
+            Glide.with(fragment)
+                    .load(path)
+                    .override(200, 200)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(0.3f)
+                    .centerCrop()
+                    .into(holder.imageView);
+        }
 
     }
 
