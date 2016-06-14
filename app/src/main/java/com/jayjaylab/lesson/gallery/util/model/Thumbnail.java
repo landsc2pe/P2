@@ -6,6 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by jjkim on 2016. 5. 17..
  */
+
 public class Thumbnail implements Parcelable {
     int id;
     int imageId;

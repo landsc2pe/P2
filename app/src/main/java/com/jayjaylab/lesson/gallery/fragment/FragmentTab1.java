@@ -29,11 +29,11 @@ public class FragmentTab1 extends Fragment {
     private RecyclerView fragmentTab1;
     private GridLayoutManager layoutManager;
     List<Image> images;
-    List<Thumbnail> thumbnails;
 
     public static FragmentTab1 newInstance(Thumbnail thumbail, Map<String, List<Image>> map) {
         Bundle args = new Bundle();
 
+        Log.d(TAG, "map : " + map + ", thumbnail : " + thumbail);
         // TODO: 2016. 6. 7.
         Parcelable mapParcelable = Parcels.wrap(map);
         args.putParcelable("thumbnail", thumbail);

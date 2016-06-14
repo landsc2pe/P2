@@ -139,6 +139,7 @@ public class FragmentFolder extends Fragment {
 
                     if(LogTag.DEBUG)Log.d("IconClick","Create");
                 }
+                // FIXME: 2016. 6. 14. 무슨 문제 있을까나? 괜찮을 까나.
                 recyclerViewGallery.setAdapter(adapterImageFolder[position]);
                 if(LogTag.DEBUG)Log.d("IconClick","Use");
 

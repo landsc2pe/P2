@@ -50,6 +50,11 @@ Map<String, List<String>> directoryMapping; 은 아래와 같은 테이블을 �
 * <https://github.com/cymcsg/UltimateRecyclerView>
 * <https://github.com/gabrielemariotti/RecyclerViewItemAnimators>
 
+### MVP
+* <http://www.tinmegali.com/en/model-view-presenter-android-part-1/>
+* <http://www.tinmegali.com/en/model-view-presenter-mvp-in-android-part-2/>
+* <http://www.tinmegali.com/en/model-view-presenter-mvp-in-android-part-3/>
+
 # 읽을 책
 * 객체지향 관련된 책
 * 디자인 패턴

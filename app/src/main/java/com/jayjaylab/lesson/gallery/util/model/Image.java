@@ -1,14 +1,18 @@
 package com.jayjaylab.lesson.gallery.util.model;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 /**
  * Created by jjkim on 2016. 5. 17..
  */
-//@Parcel
+@Parcel
 public class Image {
     int id;
     String path;
     Thumbnail thumbnail;
 
+    @ParcelConstructor
     public Image(int id, String path) {
         this.id = id;
         this.path = path;

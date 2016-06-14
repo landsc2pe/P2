@@ -28,18 +28,21 @@ import android.widget.Toast;
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.AdapterViewPager;
 import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
+import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivity;
+import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivityInterface;
 import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.util.model.MapInfo;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
+import com.jayjaylab.lesson.gallery.view.ViewMainActivityInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+    , ViewMainActivityInterface {
     //    private static int msn = 1;
     private final int MY_PERMISSION_REQUEST_STORAGE = 100;
 
@@ -51,10 +54,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LoaderImageFolder loaderImageFolder;
 
     AppBarLayout.LayoutParams params;
+    PresenterMainActivityInterface presenter;
 
     // Views
     Toolbar toolbar;
     TabLayout tabLayout;
+
 
 
     @Override
@@ -68,12 +73,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     void init() {
+        presenter = new PresenterMainActivity(this);
         setViews();
-        loadImages();
 
-        if (LogTag.DEBUG)
-            Log.d(TAG, "externalCacheDir : " + getExternalCacheDir() + ", internalCacheDir : " + getCacheDir());
-
+        presenter.checkPermission();
     }
 
     void loadImages() {
@@ -237,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    //TODO : modify check permission.
+    //TODO : modify check permission.x
 
     @TargetApi(Build.VERSION_CODES.M)
 
@@ -263,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else {
             if (LogTag.DEBUG) Log.d(TAG, "permission is already allowed...");
-
+            loadImages();
         }
     }
 
@@ -273,8 +276,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case MY_PERMISSION_REQUEST_STORAGE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
-
+                    loadImages();
                     // permission was granted, yay! do the
                     // calendar task you need to do.
 
@@ -317,5 +319,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+    }
+
+    @Override
+    public void showEveryImage() {
+
     }
 }
