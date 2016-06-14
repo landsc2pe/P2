@@ -31,6 +31,7 @@ import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
+import com.jayjaylab.lesson.gallery.util.model.MapInfo;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
 import java.util.ArrayList;
@@ -78,17 +79,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onLoad(Map<String, List<Image>> map, SparseArray<Thumbnail> thumbnails, ArrayList<Integer> sparseKeys) {
                 if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
 
-                List<Thumbnail> thumbArray = new ArrayList<>();
-                for(Integer keys : sparseKeys){
-                    thumbArray.add(thumbnails.get(keys));
-                }
+                MapInfo mapinfo = new MapInfo(map);
+                List<Image> images = new ArrayList<>();
 
+                for (String keys : mapinfo.getKeyArray()) {
+                    for (int i = 0; i < map.get(keys).size(); i++)
+                        images.add(map.get(keys).get(i));
+                }
 
 
                 final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
                 AdapterViewPager adapter = new AdapterViewPager
                         (getSupportFragmentManager(), tabLayout.getTabCount(),
-                                map, thumbArray);
+                                map, images);
 //                adapter.setDataSet(map, thumbnails);
 
                 viewPager.setAdapter(adapter);
@@ -247,6 +250,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    //TODO : modify check permission.
+
     @TargetApi(Build.VERSION_CODES.M)
 
     private void checkPermission() {
@@ -296,7 +301,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
     }
-
-
-
 }

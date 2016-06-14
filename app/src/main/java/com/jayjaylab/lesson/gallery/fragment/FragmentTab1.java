@@ -31,17 +31,16 @@ public class FragmentTab1 extends Fragment {
     List<Image> images;
     List<Thumbnail> thumbnails;
 
-    public static FragmentTab1 newInstance(Thumbnail thumbail,
-                                           Map<String, List<Image>> map) {
+    public static FragmentTab1 newInstance(Thumbnail thumbail, Map<String, List<Image>> map) {
         Bundle args = new Bundle();
 
         // TODO: 2016. 6. 7.
         Parcelable mapParcelable = Parcels.wrap(map);
         args.putParcelable("thumbnail", thumbail);
         args.putParcelable("map", mapParcelable);
-        FragmentTab1 fragment = new FragmentTab1();
-        fragment.setArguments(args);
-        return fragment;
+        FragmentTab1 fragmentTab1 = new FragmentTab1();
+        fragmentTab1.setArguments(args);
+        return fragmentTab1;
     }
 
     @Nullable
@@ -59,17 +58,17 @@ public class FragmentTab1 extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Log.d(TAG, "arrayThumbnail : " + thumbnails);
+        Log.d(TAG, "arrayThumbnail : " + images);
 
         fragmentTab1.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getContext(), 5);
 
         fragmentTab1.setLayoutManager(layoutManager);
-        fragmentTab1.setAdapter(new AdapterImageTab1(this, thumbnails));
+        fragmentTab1.setAdapter(new AdapterImageTab1(this, images));
     }
 
-    public void setImages(List<Thumbnail> thumbnails) {
-        this.thumbnails = thumbnails;
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
 }

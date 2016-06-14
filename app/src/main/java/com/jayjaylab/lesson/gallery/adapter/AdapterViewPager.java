@@ -10,7 +10,6 @@ import com.jayjaylab.lesson.gallery.fragment.FragmentTab2;
 import com.jayjaylab.lesson.gallery.fragment.FragmentTab3;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
-import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
 import java.util.List;
 import java.util.Map;
@@ -24,14 +23,14 @@ public class AdapterViewPager extends FragmentStatePagerAdapter {
     //  List<Fragment> cacheFragment;
     Fragment[] cacheFragment;
     Map<String, List<Image>> map;
-    List<Thumbnail> thumbnails;
+    List<Image> images;
 
     public AdapterViewPager(FragmentManager fm, int numOfTabs,
-                            Map<String, List<Image>> map, List<Thumbnail> thumbnails) {
+                            Map<String, List<Image>> map, List<Image> images) {
         super(fm);
         this._numOfTabs = numOfTabs;
         this.map = map;
-        this.thumbnails = thumbnails;
+        this.images = images;
         cacheFragment = new Fragment[numOfTabs];
     }
     @Override
@@ -43,7 +42,7 @@ public class AdapterViewPager extends FragmentStatePagerAdapter {
             Log.d(TAG, "cache miss.");
             if (position == 0) {
                 fragment = new FragmentTab1();
-                ((FragmentTab1) fragment).setImages(thumbnails);
+                ((FragmentTab1) fragment).setImages(images);
             }
             if (position == 1) fragment = new FragmentTab2();
             if (position == 2) fragment = new FragmentTab3();

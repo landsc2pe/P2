@@ -1,6 +1,5 @@
 package com.jayjaylab.lesson.gallery.adapter;
 
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import com.jayjaylab.lesson.gallery.adapter.frame.ViewHolder;
 import com.jayjaylab.lesson.gallery.fragment.FragmentTab1;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
-import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
 import java.util.List;
 
@@ -23,15 +21,12 @@ import java.util.List;
  */
 public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
     FragmentTab1 fragment;
-    // TODO: 2016. 6. 7.
-    List<Image> images;
-    // FIXME: 2016. 6. 7. to be removed...
-    List<Thumbnail> imagesFile;
+    List<Image> imagesFile;
 
     // TODO : get map!
-    public AdapterImageTab1(FragmentTab1 fragment, List<Thumbnail> thumbnails){
+    public AdapterImageTab1(FragmentTab1 fragment, List<Image> images) {
         this.fragment = fragment;
-        imagesFile = thumbnails;
+        imagesFile = images;
 
     }
 
@@ -44,8 +39,22 @@ public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if(imagesFile != null) {
-            String path = imagesFile.get(position).getPath();
+//        if (imagesFile != null) {
+//            String path = imagesFile.get(position).getThumbnail().getPath();
+//            if (LogTag.DEBUG) Log.d("ImagePath", path);
+//
+//            Glide.with(fragment)
+//                    .load(path)
+//                    .override(200, 200)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .thumbnail(0.3f)
+//                    .centerCrop()
+//                    .into(holder.imageView);
+//        }
+
+
+        try {
+            String path = imagesFile.get(position).getThumbnail().getPath();
             if (LogTag.DEBUG) Log.d("ImagePath", path);
 
             Glide.with(fragment)
@@ -55,8 +64,19 @@ public class AdapterImageTab1 extends RecyclerView.Adapter<ViewHolder> {
                     .thumbnail(0.3f)
                     .centerCrop()
                     .into(holder.imageView);
-        }
 
+        } catch (Exception e) {
+
+            String path = imagesFile.get(position).getPath();
+
+            Glide.with(fragment)
+                    .load(path)
+                    .override(200, 200)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(0.3f)
+                    .centerCrop()
+                    .into(holder.imageView);
+        }
 
     }
 

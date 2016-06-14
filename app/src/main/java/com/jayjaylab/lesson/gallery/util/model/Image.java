@@ -3,7 +3,7 @@ package com.jayjaylab.lesson.gallery.util.model;
 /**
  * Created by jjkim on 2016. 5. 17..
  */
-
+//@Parcel
 public class Image {
     int id;
     String path;
