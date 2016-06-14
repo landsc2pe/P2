@@ -52,78 +52,66 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     AppBarLayout.LayoutParams params;
 
+    // Views
+    Toolbar toolbar;
+    TabLayout tabLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_drawer_main);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         //Permission Check with CursorLoader execute.
         checkPermission();
+        init();
+    }
 
+    void init() {
+        setViews();
+        loadImages();
 
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.rcvr_tl_tabs);
+        if (LogTag.DEBUG)
+            Log.d(TAG, "externalCacheDir : " + getExternalCacheDir() + ", internalCacheDir : " + getCacheDir());
 
+    }
+
+    void loadImages() {
+        loaderImageFolder = new LoaderImageFolder();
+        LoaderImageFolder.OnImageLoadListener listener = new LoaderImageFolder.OnImageLoadListener() {
+            @Override
+            public void onLoad(Map<String, List<Image>> map, List<Image> originalImages) {
+                if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
+
+                setViewPager(map, originalImages);
+            }
+        };
+        loaderImageFolder.imageLoaderByMediaStore(this, listener, getApplicationContext());
+    }
+
+    void setViews() {
+        setToolbar();
+        setTabLayout();
+        setFloatingActionButton();
+        setDrawerLayout();
+    }
+
+    void setToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    void setTabLayout() {
+        tabLayout = (TabLayout) findViewById(R.id.rcvr_tl_tabs);
         if (tabLayout != null) {
             tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
             tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
             tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
             tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         }
+    }
 
-        loaderImageFolder = new LoaderImageFolder();
-        LoaderImageFolder.OnImageLoadListener listener = new LoaderImageFolder.OnImageLoadListener() {
-            @Override
-            public void onLoad(Map<String, List<Image>> map, SparseArray<Thumbnail> thumbnails, ArrayList<Integer> sparseKeys) {
-                if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
-
-                MapInfo mapinfo = new MapInfo(map);
-                List<Image> images = new ArrayList<>();
-
-                for (String keys : mapinfo.getKeyArray()) {
-                    for (int i = 0; i < map.get(keys).size(); i++)
-                        images.add(map.get(keys).get(i));
-                }
-
-
-                final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
-                AdapterViewPager adapter = new AdapterViewPager
-                        (getSupportFragmentManager(), tabLayout.getTabCount(),
-                                map, images);
-//                adapter.setDataSet(map, thumbnails);
-
-                viewPager.setAdapter(adapter);
-                viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
-                });
-                tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-
-                    @Override
-                    public void onTabSelected(TabLayout.Tab tab) {
-                        viewPager.setCurrentItem(tab.getPosition());
-
-                    }
-
-                    @Override
-                    public void onTabUnselected(TabLayout.Tab tab) {
-
-                    }
-
-                    @Override
-                    public void onTabReselected(TabLayout.Tab tab) {
-
-                    }
-                });
-            }
-        };
-        loaderImageFolder.imageLoaderByMediaStore(this, listener, getApplicationContext());
-
-
-        if (LogTag.DEBUG)
-            Log.d(TAG, "externalCacheDir : " + getExternalCacheDir() + ", internalCacheDir : " + getCacheDir());
-
-
+    void setFloatingActionButton() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null)
             fab.setOnClickListener(new View.OnClickListener() {
@@ -131,9 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onClick(View view) {
                     if (tabLayout.getVisibility() == View.VISIBLE) {
                         Log.d(TAG, "INVISIBLE <= VISIBLE");
-
                         params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-
 
                         if (fragmentFolder == null) {
                             fragmentFolder = new FragmentFolder();
@@ -180,7 +166,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
             });
+    }
 
+    void setDrawerLayout() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -189,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
     @Override
@@ -300,5 +287,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
         }
+    }
+
+    public void setViewPager(Map<String, List<Image>> map, List<Image> originalImages) {
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
+        AdapterViewPager adapter = new AdapterViewPager
+                (getSupportFragmentManager(), tabLayout.getTabCount(),
+                        map, originalImages);
+//                adapter.setDataSet(map, thumbnails);
+
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
+        });
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 }

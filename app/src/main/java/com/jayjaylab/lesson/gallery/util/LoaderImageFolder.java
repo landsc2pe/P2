@@ -41,7 +41,7 @@ public class LoaderImageFolder implements OnLoadListener {
 
 
     public interface OnImageLoadListener {
-        void onLoad(Map<String, List<Image>> map, SparseArray<Thumbnail> thumbnails, ArrayList<Integer> sparseKeys);
+        void onLoad(Map<String, List<Image>> map, List<Image> originals);
     }
 
 
@@ -220,9 +220,8 @@ public class LoaderImageFolder implements OnLoadListener {
         for (Integer keys : sparseKeys) {
             Image originalImage = arrayImage.get(keys);
             Thumbnail thumbnail = thumbnails.get(keys);
-            images.add(originalImage);
-
             originalImage.setThumbnail(thumbnail);
+            images.add(originalImage);
 
             String parent = new File(originalImage.getPath()).getParent();
 
@@ -234,13 +233,12 @@ public class LoaderImageFolder implements OnLoadListener {
                 list.add(originalImage);
                 map.put(parent, list);
             }
-
         }
 
         if (onImageLoadListener != null) {
             // TODO: 2016. 6. 7.
 //            onImageLoadListener.onLoad(map, images, sparseKeys);
-            onImageLoadListener.onLoad(map, thumbnails, sparseKeys);
+            onImageLoadListener.onLoad(map, images);
         }
 
 
