@@ -3,6 +3,7 @@ package com.jayjaylab.lesson.gallery.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,10 +19,11 @@ import com.jayjaylab.lesson.gallery.adapter.AdapterFolderAbove;
 import com.jayjaylab.lesson.gallery.adapter.AdapterFolderRight;
 import com.jayjaylab.lesson.gallery.adapter.AdapterImageFolder;
 import com.jayjaylab.lesson.gallery.adapter.frame.IconData;
-import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.OnClickListener;
 import com.jayjaylab.lesson.gallery.util.model.Image;
+
+import org.parceler.Parcels;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,9 +43,8 @@ public class FragmentFolder extends Fragment {
     Activity mActivity;
 
     int mapSize;
-    List<String> folderName;
-
     Map<String, List<Image>> hashMap;
+    List<String> folderName;
     List<String> keyArray;
     List<Image> imageFiles;
 
@@ -58,8 +59,16 @@ public class FragmentFolder extends Fragment {
     private String GALLERY_LOCATION = ".thumbnails";
     private AdapterImageFolder[] adapterImageFolder;
     private AdapterImageFolder adapterImageFolder1;
-    LoaderImageFolder loaderImageFolder;
 
+    public static FragmentFolder newInstance(Map<String, List<Image>> map) {
+        Bundle args = new Bundle();
+
+        Parcelable mapParcelable = Parcels.wrap(map);
+        args.putParcelable("map", mapParcelable);
+        FragmentFolder fragmentFolder = new FragmentFolder();
+        fragmentFolder.setArguments(args);
+        return fragmentFolder;
+    }
 
 
     @Nullable
@@ -84,7 +93,8 @@ public class FragmentFolder extends Fragment {
         mActivity = getActivity();
         myDataset = new ArrayList<>();
 
-        setIconAndImageMap(LoaderImageFolder.map);
+        hashMap = Parcels.unwrap(getArguments().getParcelable("map"));
+        setIconAndImageMap(hashMap);
 //        loaderImageFolder = new LoaderImageFolder();
 
 //        loaderImageFolder.setOnImageLoadListener(new LoaderImageFolder.OnImageLoadListener() {
@@ -118,7 +128,7 @@ public class FragmentFolder extends Fragment {
         recyclerViewGallery.setLayoutManager(gridLayoutManager);
         recyclerViewGallery.setItemViewCacheSize(40);
 
-        if(LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset);
+        if (LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset);
         adapterFolderAbove = new AdapterFolderAbove(myDataset);
         adapterMenu = new AdapterFolderRight(myDataset);
 
@@ -133,15 +143,15 @@ public class FragmentFolder extends Fragment {
             public void onItemClick(View view, int position) {
                 // FIXME: 2016. 5. 24. WTF
                 imageFiles = hashMap.get(keyArray.get(position));
-                if(adapterImageFolder[position] == null){
+                if (adapterImageFolder[position] == null) {
                     adapterImageFolder1 = new AdapterImageFolder(FragmentFolder.this, imageFiles);
                     adapterImageFolder[position] = adapterImageFolder1;
 
-                    if(LogTag.DEBUG)Log.d("IconClick","Create");
+                    if (LogTag.DEBUG) Log.d("IconClick", "Create");
                 }
                 // FIXME: 2016. 6. 14. 무슨 문제 있을까나? 괜찮을 까나.
                 recyclerViewGallery.setAdapter(adapterImageFolder[position]);
-                if(LogTag.DEBUG)Log.d("IconClick","Use");
+                if (LogTag.DEBUG) Log.d("IconClick", "Use");
 
 //                adapterImageFolder.setOnItemClickListener(new AdapterImageFolder.OnItemClickListener() {
 //                    @Override
@@ -160,17 +170,15 @@ public class FragmentFolder extends Fragment {
     }
 
 
-
     public void sortImagePath(Map<String, List<Image>> map) {
         mapSize = map.size();
-        hashMap = map;
         adapterImageFolder = new AdapterImageFolder[mapSize];
         Log.d(TAG, "mapSize : " + mapSize + ", hashMap : " + map);
 
         folderName = new ArrayList<>();
         keyArray = new ArrayList<>();
 
-        Iterator<String> iter = hashMap.keySet().iterator();
+        Iterator<String> iter = map.keySet().iterator();
         while (iter.hasNext()) {
             String keys = iter.next();
             keyArray.add(keys);
@@ -185,16 +193,17 @@ public class FragmentFolder extends Fragment {
 
     /**
      * 아이콘 세팅 및 해쉬맵 설정한다.
+     *
      * @param map 이미지를 가지는 맵.
      */
     void setIconAndImageMap(Map<String, List<Image>> map) {
         sortImagePath(map);
         //"Above" icon button creator using folder name array.
         for (int i = 0; i < mapSize; i++) {
-            if(LogTag.DEBUG) Log.d(TAG, "folder : " + folderName.get(i));
+            if (LogTag.DEBUG) Log.d(TAG, "folder : " + folderName.get(i));
             myDataset.add(new IconData(folderName.get(i), R.mipmap.ic_launcher));
         }
-        if(LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset.toString());
+        if (LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset.toString());
 //        adapterFolderAbove.addItems(myDataset);
 //        adapterMenu.addItems(myDataset);
     }

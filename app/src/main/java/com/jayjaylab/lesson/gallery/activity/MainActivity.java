@@ -19,7 +19,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,16 +32,13 @@ import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivityInterface;
 import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
-import com.jayjaylab.lesson.gallery.util.model.MapInfo;
-import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 import com.jayjaylab.lesson.gallery.view.ViewMainActivityInterface;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
-    , ViewMainActivityInterface {
+        , ViewMainActivityInterface {
     //    private static int msn = 1;
     private final int MY_PERMISSION_REQUEST_STORAGE = 100;
 
@@ -59,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Views
     Toolbar toolbar;
     TabLayout tabLayout;
-
+    Map hashmap;
 
 
     @Override
@@ -85,8 +81,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onLoad(Map<String, List<Image>> map, List<Image> originalImages) {
                 if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
-
+                hashmap = map;
                 setViewPager(map, originalImages);
+
             }
         };
         loaderImageFolder.imageLoaderByMediaStore(this, listener, getApplicationContext());
@@ -125,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
 
                         if (fragmentFolder == null) {
-                            fragmentFolder = new FragmentFolder();
+                            fragmentFolder = FragmentFolder.newInstance(hashmap);
                             fragmentManager = getSupportFragmentManager();
 
                             fragmentTransaction = fragmentManager.beginTransaction();
