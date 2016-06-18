@@ -99,28 +99,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+
                     if (tabLayout.getVisibility() == View.VISIBLE) {
                         Log.d(TAG, "INVISIBLE <= VISIBLE");
                         params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
 
                         if (fragmentFolder == null) {
                             fragmentFolder = FragmentFolder.newInstance(hashmap);
-                            fragmentManager = getSupportFragmentManager();
-
-                            fragmentTransaction = fragmentManager.beginTransaction();
                             fragmentTransaction.add(R.id.main_layout, fragmentFolder);
-                            fragmentTransaction.commit();
                             tabLayout.setVisibility(View.INVISIBLE);
-
                             if (LogTag.DEBUG) Log.d("FragmentChange", "new");
 
                         } else {
-
-                            fragmentTransaction = fragmentManager.beginTransaction();
                             fragmentTransaction.show(fragmentFolder);
-                            fragmentTransaction.commit();
                             tabLayout.setVisibility(View.INVISIBLE);
-
                             if (LogTag.DEBUG) Log.d("FragmentChange", "else");
 
                         }
@@ -133,12 +127,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
                         if (LogTag.DEBUG)
                             Log.d("FragmentChange", "Bb : " + params.getScrollFlags());
-
-                        fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.hide(fragmentFolder);
-                        fragmentTransaction.commit();
                         tabLayout.setVisibility(View.VISIBLE);
                     }
+
+                    fragmentTransaction.commit();
                 }
             });
     }
