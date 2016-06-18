@@ -134,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (LogTag.DEBUG)
                             Log.d("FragmentChange", "Bb : " + params.getScrollFlags());
 
-
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.hide(fragmentFolder);
                         fragmentTransaction.commit();
@@ -254,6 +253,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+    }
+
+    @Override
+    public void storeImageMap(Map<String, List<Image>> map) {
+        hashmap = map;
     }
 
     @Override

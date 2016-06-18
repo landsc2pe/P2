@@ -40,6 +40,7 @@ public class PresenterMainActivity implements PresenterMainActivityInterface {
                 public void onLoad(Map<String, List<Image>> map, List<Image> originalImages) {
                     if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
                     if(view.get() != null) {
+                        view.get().storeImageMap(map);
                         view.get().showEveryImage(map, originalImages);
                     }
                 }
