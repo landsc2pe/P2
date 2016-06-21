@@ -55,12 +55,10 @@ public class LoaderImageFolder implements OnLoadListener {
         loadImageByMediaStore(activity);
         setOnImageLoadListener(listener);
         this.context = context;
-
     }
 
     public void loadImageByMediaStore(final Activity activity) {
         Log.d(TAG, "loadImageByMediaStore() : activity : " + activity);
-
 
         loaderCallbacksForOriginalImages = new android.app.LoaderManager.LoaderCallbacks<Cursor>() {
 
