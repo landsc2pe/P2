@@ -55,6 +55,11 @@ Map<String, List<String>> directoryMapping; 은 아래와 같은 테이블을 �
 * <http://www.tinmegali.com/en/model-view-presenter-mvp-in-android-part-2/>
 * <http://www.tinmegali.com/en/model-view-presenter-mvp-in-android-part-3/>
 
+### Http library 사용하여 서버에 요청 및 응답 처리하기
+* <http://square.github.io/retrofit/>  Retrofit 2를 이용함
+* URL : https://api.github.com/search/users?q=landsc2pe 에, GET 요청 후 응답을 Tab3에 노출.
+
+
 # 읽을 책
 * 객체지향 관련된 책
 * 디자인 패턴
