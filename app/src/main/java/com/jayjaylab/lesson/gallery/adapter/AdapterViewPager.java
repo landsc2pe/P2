@@ -12,7 +12,6 @@ import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by HOMIN on 2016-05-25.
@@ -22,14 +21,11 @@ public class AdapterViewPager extends FragmentStatePagerAdapter {
     int _numOfTabs;
     //  List<Fragment> cacheFragment;
     Fragment[] cacheFragment;
-    Map<String, List<Image>> map;
     List<Image> images;
 
-    public AdapterViewPager(FragmentManager fm, int numOfTabs,
-                            Map<String, List<Image>> map, List<Image> images) {
+    public AdapterViewPager(FragmentManager fm, int numOfTabs, List<Image> images) {
         super(fm);
         this._numOfTabs = numOfTabs;
-        this.map = map;
         this.images = images;
         cacheFragment = new Fragment[numOfTabs];
     }

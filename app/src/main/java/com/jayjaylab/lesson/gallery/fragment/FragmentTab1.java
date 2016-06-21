@@ -1,7 +1,6 @@
 package com.jayjaylab.lesson.gallery.fragment;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,11 +13,8 @@ import android.view.ViewGroup;
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.AdapterImageTab1;
 import com.jayjaylab.lesson.gallery.util.model.Image;
-import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
-import org.parceler.Parcels;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -29,19 +25,19 @@ public class FragmentTab1 extends Fragment {
     private RecyclerView fragmentTab1;
     private GridLayoutManager layoutManager;
     List<Image> images;
-
-    public static FragmentTab1 newInstance(Thumbnail thumbail, Map<String, List<Image>> map) {
-        Bundle args = new Bundle();
-
-        Log.d(TAG, "map : " + map + ", thumbnail : " + thumbail);
-        // TODO: 2016. 6. 7.
-        Parcelable mapParcelable = Parcels.wrap(map);
-        args.putParcelable("thumbnail", thumbail);
-        args.putParcelable("map", mapParcelable);
-        FragmentTab1 fragmentTab1 = new FragmentTab1();
-        fragmentTab1.setArguments(args);
-        return fragmentTab1;
-    }
+//
+//    public static FragmentTab1 newInstance(Thumbnail thumbail, Map<String, List<Image>> map) {
+//        Bundle args = new Bundle();
+//
+//        Log.d(TAG, "map : " + map + ", thumbnail : " + thumbail);
+//        // TODO: 2016. 6. 7.
+//        Parcelable mapParcelable = Parcels.wrap(map);
+//        args.putParcelable("map", mapParcelable);
+//        args.putParcelable("thumbnail", thumbail);
+//        FragmentTab1 fragmentTab1 = new FragmentTab1();
+//        fragmentTab1.setArguments(args);
+//        return fragmentTab1;
+//    }
 
     @Nullable
     @Override

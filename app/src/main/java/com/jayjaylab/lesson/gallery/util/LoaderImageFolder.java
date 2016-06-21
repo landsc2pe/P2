@@ -1,7 +1,6 @@
 package com.jayjaylab.lesson.gallery.util;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -33,8 +32,6 @@ public class LoaderImageFolder implements OnLoadListener {
     SparseArray<Image> arrayImage;
     ArrayList<Integer> sparseKeys;
 
-
-    Context context;
     OnImageLoadListener onImageLoadListener;
     android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForOriginalImages;
     android.app.LoaderManager.LoaderCallbacks<Cursor> loaderCallbacksForThumbnails;
@@ -45,19 +42,16 @@ public class LoaderImageFolder implements OnLoadListener {
     }
 
 
+    public void imageLoaderByMediaStore(final Activity activity, OnImageLoadListener listener) {
+        setOnImageLoadListener(listener);
+        loadImageByMediaStore(activity);
+
+    }
+
     public void setOnImageLoadListener(OnImageLoadListener listener) {
         onImageLoadListener = listener;
 
     }
-
-
-    public void imageLoaderByMediaStore(final Activity activity, OnImageLoadListener listener, Context context) {
-        loadImageByMediaStore(activity);
-        setOnImageLoadListener(listener);
-        this.context = context;
-
-    }
-
     public void loadImageByMediaStore(final Activity activity) {
         Log.d(TAG, "loadImageByMediaStore() : activity : " + activity);
 
@@ -191,7 +185,7 @@ public class LoaderImageFolder implements OnLoadListener {
             Log.d(TAG, "arrayThumbnails : " + thumbnails + ", # : " + thumbnails.size());
         if (LogTag.DEBUG) Log.d(TAG, "thread1 : " + Thread.currentThread());
         arrayThumbnails = thumbnails;
-        MapData(arrayImage, arrayThumbnails);
+        mapData(arrayImage, arrayThumbnails);
     }
 
     @Override
@@ -203,10 +197,10 @@ public class LoaderImageFolder implements OnLoadListener {
 //        if(LogTag.DEBUG)Log.d("SparseArray", ""+arrayImage.size());
 //        if(LogTag.DEBUG) for(int i=0; i<sparseArray.size(); i++)Log.d("SparseArray", arrayImage.valueAt(i).getPath());
 
-        MapData(arrayImage, arrayThumbnails);
+        mapData(arrayImage, arrayThumbnails);
     }
 
-    Map<String, List<Image>> MapData(
+    Map<String, List<Image>> mapData(
             SparseArray<Image> arrayImage, SparseArray<Thumbnail> thumbnails) {
 
 

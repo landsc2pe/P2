@@ -1,15 +1,11 @@
 package com.jayjaylab.lesson.gallery.activity;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -22,14 +18,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.AdapterViewPager;
 import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivity;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivityInterface;
-import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.view.ViewMainActivityInterface;
@@ -44,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FragmentManager fragmentManager;
     FragmentFolder fragmentFolder;
     FragmentTransaction fragmentTransaction;
-    LoaderImageFolder loaderImageFolder;
 
     AppBarLayout.LayoutParams params;
     PresenterMainActivityInterface presenter;
@@ -52,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Views
     Toolbar toolbar;
     TabLayout tabLayout;
-    Map hashmap;
+    Map hashMap;
 
 
     @Override
@@ -62,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         presenter = new PresenterMainActivity(this);
 
         init();
-        if(presenter.checkPermission(this)) {
+        if (presenter.checkPermission(this)) {
             presenter.loadImage(this);
         }
     }
@@ -107,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
 
                         if (fragmentFolder == null) {
-                            fragmentFolder = FragmentFolder.newInstance(hashmap);
+                            fragmentFolder = FragmentFolder.newInstance(hashMap);
                             fragmentTransaction.add(R.id.main_layout, fragmentFolder);
                             tabLayout.setVisibility(View.INVISIBLE);
                             if (LogTag.DEBUG) Log.d("FragmentChange", "new");
@@ -146,6 +139,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+
+
+
+    public void setViewPager(List<Image> originalImages) {
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
+        AdapterViewPager adapter = new AdapterViewPager
+                (getSupportFragmentManager(), tabLayout.getTabCount(), originalImages);
+//                adapter.setDataSet(map, thumbnails);
+
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
+        });
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    @Override
+    public void storeImageMap(Map<String, List<Image>> map) {
+        hashMap = map;
+    }
+
+    @Override
+    public void showEveryImage(List<Image> originalImages) {
+        setViewPager(originalImages);
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -218,43 +254,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void setViewPager(Map<String, List<Image>> map, List<Image> originalImages) {
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.rcvr_vp_pager);
-        AdapterViewPager adapter = new AdapterViewPager
-                (getSupportFragmentManager(), tabLayout.getTabCount(),
-                        map, originalImages);
-//                adapter.setDataSet(map, thumbnails);
-
-        viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
-        });
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-    }
-
-    @Override
-    public void storeImageMap(Map<String, List<Image>> map) {
-        hashmap = map;
-    }
-
-    @Override
-    public void showEveryImage(Map<String, List<Image>> map, List<Image> originalImages) {
-        setViewPager(map, originalImages);
-    }
 }
+

@@ -3,12 +3,12 @@ package com.jayjaylab.lesson.gallery.presenter;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.jayjaylab.lesson.gallery.util.LoaderImageFolder;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
@@ -27,7 +27,7 @@ public class PresenterMainActivity implements PresenterMainActivityInterface {
     LoaderImageFolder loader;
 
     public PresenterMainActivity(ViewMainActivityInterface view) {
-        this.view = new WeakReference<ViewMainActivityInterface>(view);
+        this.view = new WeakReference<>(view);
         loader = new LoaderImageFolder();
     }
 
@@ -41,11 +41,11 @@ public class PresenterMainActivity implements PresenterMainActivityInterface {
                     if (LogTag.DEBUG) Log.d(TAG, "map : " + map);
                     if(view.get() != null) {
                         view.get().storeImageMap(map);
-                        view.get().showEveryImage(map, originalImages);
+                        view.get().showEveryImage(originalImages);
                     }
                 }
             };
-            loader.imageLoaderByMediaStore(activity, listener, activity.getApplicationContext());
+            loader.imageLoaderByMediaStore(activity, listener);
         }
     }
 
@@ -80,4 +80,5 @@ public class PresenterMainActivity implements PresenterMainActivityInterface {
             return true;
         }
     }
+
 }
