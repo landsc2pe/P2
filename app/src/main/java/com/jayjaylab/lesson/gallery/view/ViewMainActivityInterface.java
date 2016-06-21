@@ -10,5 +10,5 @@ import java.util.Map;
  */
 public interface ViewMainActivityInterface {
     void storeImageMap(Map<String, List<Image>> map);
-    void showEveryImage(Map<String, List<Image>> map, List<Image> originalImages);
+    void showEveryImage(List<Image> originalImages);
 }

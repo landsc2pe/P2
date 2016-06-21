@@ -2,7 +2,6 @@ package com.jayjaylab.lesson.gallery.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,7 +24,6 @@ import com.jayjaylab.lesson.gallery.util.model.Image;
 
 import org.parceler.Parcels;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,8 +35,6 @@ import java.util.Map;
 public class FragmentFolder extends Fragment {
 
     final String TAG = FragmentFolder.class.getSimpleName();
-    public static String KEY_IMAGE = "image";
-
 
     Activity mActivity;
 
@@ -48,15 +44,13 @@ public class FragmentFolder extends Fragment {
     List<String> keyArray;
     List<Image> imageFiles;
 
-
     private RecyclerView recyclerViewAbove;
     private RecyclerView recyclerViewMenu;
     private RecyclerView recyclerViewGallery;
     private AdapterFolderRight adapterMenu;
     private AdapterFolderAbove adapterFolderAbove;
     private ArrayList<IconData> myDataset;
-    private File mGalleryFolder;
-    private String GALLERY_LOCATION = ".thumbnails";
+    //    private File mGalleryFolder;
     private AdapterImageFolder[] adapterImageFolder;
     private AdapterImageFolder adapterImageFolder1;
 
@@ -75,7 +69,10 @@ public class FragmentFolder extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        createImageGallery();
+
+
+
+//        createImageGallery();
 
         View rootView = inflater.inflate(R.layout.layout_fragment_folder, container, false);
         recyclerViewAbove = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
@@ -94,7 +91,9 @@ public class FragmentFolder extends Fragment {
         myDataset = new ArrayList<>();
 
         hashMap = Parcels.unwrap(getArguments().getParcelable("map"));
-        setIconAndImageMap(hashMap);
+        sortImagePath(hashMap);
+        setIconAndImageMap();
+
 //        loaderImageFolder = new LoaderImageFolder();
 
 //        loaderImageFolder.setOnImageLoadListener(new LoaderImageFolder.OnImageLoadListener() {
@@ -170,6 +169,11 @@ public class FragmentFolder extends Fragment {
     }
 
 
+    /**
+     * 아이콘 세팅 및 해쉬맵 설정한다.
+     */
+
+
     public void sortImagePath(Map<String, List<Image>> map) {
         mapSize = map.size();
         adapterImageFolder = new AdapterImageFolder[mapSize];
@@ -186,35 +190,25 @@ public class FragmentFolder extends Fragment {
             int a = it.length - 1;
             folderName.add(it[a]);
         }
-
-//        folderName = hashMap.keySet().toArray(new String[map.size()]);
     }
 
-
-    /**
-     * 아이콘 세팅 및 해쉬맵 설정한다.
-     *
-     * @param map 이미지를 가지는 맵.
-     */
-    void setIconAndImageMap(Map<String, List<Image>> map) {
-        sortImagePath(map);
+    void setIconAndImageMap() {
         //"Above" icon button creator using folder name array.
         for (int i = 0; i < mapSize; i++) {
             if (LogTag.DEBUG) Log.d(TAG, "folder : " + folderName.get(i));
             myDataset.add(new IconData(folderName.get(i), R.mipmap.ic_launcher));
         }
         if (LogTag.DEBUG) Log.d(TAG, "myDataset : " + myDataset.toString());
-//        adapterFolderAbove.addItems(myDataset);
-//        adapterMenu.addItems(myDataset);
     }
 
 
-    //폴더생성
-    private void createImageGallery() {
-        File storageDirectory = Environment.getExternalStoragePublicDirectory("/DCIM");
-        mGalleryFolder = new File(storageDirectory, GALLERY_LOCATION);
-        if (!mGalleryFolder.exists()) {
-            mGalleryFolder.mkdirs();
-        }
-    }
+//
+//    //폴더생성
+//    private void createImageGallery() {
+//        File storageDirectory = Environment.getExternalStoragePublicDirectory("/DCIM");
+//        mGalleryFolder = new File(storageDirectory, GALLERY_LOCATION);
+//        if (!mGalleryFolder.exists()) {
+//            mGalleryFolder.mkdirs();
+//        }
+//    }
 }
