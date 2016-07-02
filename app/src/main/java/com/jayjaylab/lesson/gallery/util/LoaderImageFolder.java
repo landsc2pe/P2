@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.jayjaylab.lesson.gallery.util.eventbus.EventBus;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
@@ -51,6 +52,7 @@ public class LoaderImageFolder implements OnLoadListener {
     public void setOnImageLoadListener(OnImageLoadListener listener) {
         onImageLoadListener = listener;
     }
+
     public void loadImageByMediaStore(final Activity activity) {
         Log.d(TAG, "loadImageByMediaStore() : activity : " + activity);
 

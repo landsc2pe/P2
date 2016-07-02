@@ -21,9 +21,12 @@ import android.view.View;
 
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.adapter.AdapterViewPager;
+import com.jayjaylab.lesson.gallery.event.ClickEvent;
+import com.jayjaylab.lesson.gallery.event.ClickEventId;
 import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivity;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivityInterface;
+import com.jayjaylab.lesson.gallery.util.eventbus.EventBus;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.view.ViewMainActivityInterface;
@@ -47,17 +50,24 @@ public class MainActivity extends AppCompatActivity implements
     TabLayout tabLayout;
     Map hashMap;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_drawer_main);
         presenter = new PresenterMainActivity(this);
+        EventBus.getInstance().getBus().register(this);
 
         init();
         if (presenter.checkPermission(this)) {
             presenter.loadImage(this);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        EventBus.getInstance().getBus().unregister(this);
     }
 
     void init() {
@@ -92,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    EventBus.getInstance().getBus().post(
+                            new ClickEvent(ClickEventId.FLOATING_ACTION_BUTTON));
+
                     fragmentManager = getSupportFragmentManager();
                     fragmentTransaction = fragmentManager.beginTransaction();
 
