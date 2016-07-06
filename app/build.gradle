@@ -39,7 +39,7 @@ dependencies {
     // Set this dependency if you want to use Hamcrest matching
     testCompile 'org.hamcrest:hamcrest-library:1.1'
     // Robolectric setup for unit testing w/o devices or emulators.
-    testCompile "org.robolectric:robolectric:3.0"
+    testCompile "org.robolectric:robolectric:3.1-rc1"
     testCompile 'org.robolectric:shadows-multidex:3.0'
 
     // Android JUnit Runner

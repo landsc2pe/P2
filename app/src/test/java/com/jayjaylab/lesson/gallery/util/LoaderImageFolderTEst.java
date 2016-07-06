@@ -1,5 +1,8 @@
 package com.jayjaylab.lesson.gallery.util;
 
+import android.app.Activity;
+import android.os.Build;
+import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import com.jayjaylab.lesson.gallery.BuildConfig;
 import com.jayjaylab.lesson.gallery.activity.MainActivity;
@@ -22,20 +25,20 @@ import static org.junit.Assert.assertThat;
  * Created by jjkim on 2016. 7. 6..
  */
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class)
+@Config(constants = BuildConfig.class, sdk = android.os.Build.VERSION_CODES.LOLLIPOP)
 public class LoaderImageFolderTest  {
-    MainActivity mainActivity;
+    AppCompatActivity activity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        mainActivity = Robolectric.setupActivity(MainActivity.class);
+        MockitoAnnotations.initMocks(this); // can get Application object
+        activity = Robolectric.buildActivity(AppCompatActivity.class).create().get();
     }
 
     @Test
     public void testIfImageThumbnailsReturnsWithin5econds() {
         LoaderImageFolder loaderImageFolder = new LoaderImageFolder();
-        loaderImageFolder.loadImageByMediaStore(mainActivity);
+        loaderImageFolder.loadImageByMediaStore(activity);
         try {
             Thread.sleep(5000);
         } catch (Exception e) {
