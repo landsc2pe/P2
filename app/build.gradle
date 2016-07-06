@@ -35,6 +35,27 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     // Plain Junit
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    // Set this dependency if you want to use Hamcrest matching
+    testCompile 'org.hamcrest:hamcrest-library:1.1'
+    // Robolectric setup for unit testing w/o devices or emulators.
+    testCompile "org.robolectric:robolectric:3.0"
+    testCompile 'org.robolectric:shadows-multidex:3.0'
+
+    // Android JUnit Runner
+//    androidTestCompile 'com.android.support.test:runner:0.4'
+//    // JUnit4 Rules
+//    androidTestCompile 'com.android.support.test:rules:0.4'
+////    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.1') {
+//        exclude group: 'javax.inject'
+//        exclude group: 'com.google.guava'
+//        exclude module: 'espresso-idling-resource'
+//    }
+//    // Espresso-contrib for DatePicker, RecyclerView, Drawer actions, Accessibility checks, CountingIdlingResource
+//    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.1'
+//    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.1'
+
 
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:cardview-v7:23.4.0'

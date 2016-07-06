@@ -26,6 +26,7 @@ import com.jayjaylab.lesson.gallery.event.ClickEventId;
 import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivity;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivityInterface;
+import com.jayjaylab.lesson.gallery.sample.ThreadSample;
 import com.jayjaylab.lesson.gallery.util.eventbus.EventBus;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements
         if (presenter.checkPermission(this)) {
             presenter.loadImage(this);
         }
+
+        test();
     }
 
     @Override
@@ -68,6 +71,11 @@ public class MainActivity extends AppCompatActivity implements
         super.onDestroy();
 
         EventBus.getInstance().getBus().unregister(this);
+    }
+
+    public void test() {
+        ThreadSample threadSample = new ThreadSample();
+        threadSample.testAsyncTAsk();
     }
 
     void init() {

@@ -66,6 +66,9 @@ Map<String, List<String>> directoryMapping; 은 아래와 같은 테이블을 �
 
 ## Handler, Looper, HandlerThread
 
+## AsyncTask, Thread, HandlerThread, java.util.concurrent
+
+
 # 읽을 책
 * 객체지향 관련된 책
 * 디자인 패턴
