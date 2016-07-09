@@ -26,6 +26,7 @@ import com.jayjaylab.lesson.gallery.event.ClickEventId;
 import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivity;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivityInterface;
+import com.jayjaylab.lesson.gallery.sample.AsyncTaskSample;
 import com.jayjaylab.lesson.gallery.sample.ThreadSample;
 import com.jayjaylab.lesson.gallery.util.eventbus.EventBus;
 import com.jayjaylab.lesson.gallery.util.LogTag;
@@ -74,8 +75,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void test() {
+//        AsyncTaskSample threadSample = new AsyncTaskSample();
+//        threadSample.testAsyncTask();
+
         ThreadSample threadSample = new ThreadSample();
-        threadSample.testAsyncTAsk();
+//        threadSample.test();
+        threadSample.test();
     }
 
     void init() {

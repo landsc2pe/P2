@@ -1,48 +1,50 @@
 package com.jayjaylab.lesson.gallery;
 
-import android.os.AsyncTask;
+import android.util.Log;
+import com.jayjaylab.lesson.gallery.sample.ThreadSample;
+import com.jayjaylab.lesson.gallery.util.LogTag;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 /**
- * Created by jjkim on 2016. 7. 6..
+ * Created by jjkim on 2016. 7. 9..
  */
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class)
+@Config(constants = BuildConfig.class, sdk = android.os.Build.VERSION_CODES.LOLLIPOP)
 public class ThreadTest {
+    final String TAG = ThreadSample.class.getSimpleName();
+    int count = 0;
+
     @Test
-    public void test() {
-        Thread thread = new Thread(new Runnable() {
+    public void testThread() {
+        Thread thread1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("a");
-            }
-
-            void println() {
-
+                for(int i = 0; i < 1000; i++) {
+                    count++;
+                }
             }
         });
-        thread.start();
-    }
-
-    @Test
-    public void test1() {
-        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
+        Thread thread2 = new Thread(new Runnable() {
             @Override
-            protected Void doInBackground(Void... params) {
-                System.out.println("b");
-                return null;
+            public void run() {
+                for(int i = 0; i < 1000; i++) {
+                    count++;
+                }
             }
+        });
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
+        thread1.start();
+        thread2.start();
 
-                System.out.println("c");
-            }
-        };
-        asyncTask.execute();
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("count : " + count);
     }
 }

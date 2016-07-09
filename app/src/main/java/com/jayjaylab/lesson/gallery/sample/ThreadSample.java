@@ -1,56 +1,81 @@
 package com.jayjaylab.lesson.gallery.sample;
 
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 
 /**
- * Created by jjkim on 2016. 7. 6..
+ * Created by jjkim on 2016. 7. 9..
  */
 public class ThreadSample {
+    final String TAG = ThreadSample.class.getSimpleName();
+    Handler handler;
+    int count;
 
-
-    public void test() {
-        Sample1<Integer> sample = new Sample1<>(Integer.valueOf(1));
-
-        Sample2<Integer, Integer, Integer> sample2 =
-                new Sample2<Integer, Integer, Integer>();
+    public ThreadSample() {
+        handler = new Handler();
+        count = 0;
     }
 
-    public void testAsyncTAsk() {
-        if(LogTag.DEBUG) Log.d("sample", "1");
-        test();
-        if(LogTag.DEBUG) Log.d("sample", "2");
+    public void test() {
+        Runnable task1 = new Runnable() {
+            @Override
+            public void run() {
+                if(LogTag.DEBUG) Log.d(TAG, "aaaa");
+                if(LogTag.DEBUG) Log.d(TAG, "priority : " +
+                    Thread.currentThread().getPriority());
 
-        AsyncTask<Integer, Integer, Integer> asyncTask =
-                new AsyncTask<Integer, Integer, Integer>() {
+                handler.post(new Runnable() {
                     @Override
-                    protected Integer doInBackground(Integer... params) {
-                        if(LogTag.DEBUG) Log.d("sample",
-                                "doInBackground() : thread name : " +
-                                Thread.currentThread().getName());
-
-                        publishProgress(10);
-
-                        return Integer.valueOf(10);
+                    public void run() {
+                        if(LogTag.DEBUG) Log.d(TAG, "t");
+                        // ui handling
                     }
+                });
+            }
+        };
+        Runnable task2 = new Runnable() {
+            @Override
+            public void run() {
+                if(LogTag.DEBUG) Log.d(TAG, "bbbb");
+            }
+        };
 
-                    @Override
-                    protected void onProgressUpdate(Integer... values) {
-                        if(LogTag.DEBUG) Log.d("sample",
-                                "onProgressUpdate() : thread name : " +
-                                Thread.currentThread().getName());
-                        super.onProgressUpdate(values);
-                    }
+        if(LogTag.DEBUG) Log.d(TAG, "main priority : " +
+                Thread.currentThread().getPriority());
 
-                    @Override
-                    protected void onPostExecute(Integer integer) {
-                        if(LogTag.DEBUG) Log.d("sample",
-                                "onPostExecute() : thread name : " +
-                                Thread.currentThread().getName());
-                        super.onPostExecute(integer);
-                    }
-                };
-        asyncTask.execute();
+        Thread thread = new Thread(task1);
+        thread.start();
+    }
+
+    public void test2() {
+        Thread thread1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < 100; i++) {
+                    count++;
+                }
+            }
+        });
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < 100; i++) {
+                    count++;
+                }
+            }
+        });
+
+        thread1.start();
+        thread2.start();
+
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(LogTag.DEBUG) Log.d(TAG, "count : " + count);
     }
 }
