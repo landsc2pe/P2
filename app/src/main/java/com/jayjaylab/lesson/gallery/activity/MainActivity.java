@@ -38,7 +38,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, ViewMainActivityInterface {
-    final String TAG = MainActivity.class.getSimpleName();
+    final String TAG = getClass().getSimpleName();
 
     FragmentManager fragmentManager;
     FragmentFolder fragmentFolder;
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements
             tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
             tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
             tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+            tabLayout.addTab(tabLayout.newTab().setText("Tab 4"));
             tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         }
     }
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements
                 (getSupportFragmentManager(), tabLayout.getTabCount(), originalImages);
 //                adapter.setDataSet(map, thumbnails);
 
+        Log.d(TAG, "adapter : " + adapter);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
         });

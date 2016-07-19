@@ -175,20 +175,22 @@ public class FragmentFolder extends Fragment {
 
 
     public void sortImagePath(Map<String, List<Image>> map) {
-        mapSize = map.size();
-        adapterImageFolder = new AdapterImageFolder[mapSize];
-        Log.d(TAG, "mapSize : " + mapSize + ", hashMap : " + map);
+        if(map != null) {
+            mapSize = map.size();
+            adapterImageFolder = new AdapterImageFolder[mapSize];
+            Log.d(TAG, "mapSize : " + mapSize + ", hashMap : " + map);
 
-        folderName = new ArrayList<>();
-        keyArray = new ArrayList<>();
+            folderName = new ArrayList<>();
+            keyArray = new ArrayList<>();
 
-        Iterator<String> iter = map.keySet().iterator();
-        while (iter.hasNext()) {
-            String keys = iter.next();
-            keyArray.add(keys);
-            String[] it = keys.split("/");
-            int a = it.length - 1;
-            folderName.add(it[a]);
+            Iterator<String> iter = map.keySet().iterator();
+            while (iter.hasNext()) {
+                String keys = iter.next();
+                keyArray.add(keys);
+                String[] it = keys.split("/");
+                int a = it.length - 1;
+                folderName.add(it[a]);
+            }
         }
     }
 

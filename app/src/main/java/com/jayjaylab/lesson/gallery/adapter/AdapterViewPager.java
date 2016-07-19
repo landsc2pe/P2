@@ -8,6 +8,7 @@ import android.util.Log;
 import com.jayjaylab.lesson.gallery.fragment.FragmentTab1;
 import com.jayjaylab.lesson.gallery.fragment.FragmentTab2;
 import com.jayjaylab.lesson.gallery.fragment.FragmentTab3;
+import com.jayjaylab.lesson.gallery.fragment.FragmentTab4;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 
@@ -40,8 +41,9 @@ public class AdapterViewPager extends FragmentStatePagerAdapter {
                 fragment = new FragmentTab1();
                 ((FragmentTab1) fragment).setImages(images);
             }
-            if (position == 1) fragment = new FragmentTab2();
-            if (position == 2) fragment = new FragmentTab3();
+            else if (position == 1) fragment = new FragmentTab2();
+            else if (position == 2) fragment = new FragmentTab3();
+            else if (position == 3) fragment = new FragmentTab4();
 
             cacheFragment[position] = fragment;
         } else {
