@@ -13,6 +13,11 @@ import butterknife.BindView;
 import com.jayjaylab.lesson.gallery.R;
 import com.jayjaylab.lesson.gallery.util.LogTag;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by jjkim on 2016. 7. 19..
  */
@@ -30,6 +35,26 @@ public class FragmentTab4 extends Fragment {
 
     void init() {
         setWebView();
+        testThreadPool();
+    }
+
+    void testThreadPool() {
+        // 3 : core pool size
+        // 5 : maximum pool size
+        ExecutorService threadPool = new ThreadPoolExecutor(1, 1, 3, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<Runnable>(100));
+        threadPool.submit(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
     }
 
     void setWebView() {
