@@ -9,7 +9,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.jayjaylab.lesson.gallery.util.eventbus.EventBus;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
 
@@ -210,7 +209,7 @@ public class LoaderImageFolder implements OnLoadListener {
 
         map = new HashMap<>();
 
-        List<Image> images = new ArrayList<Image>(arrayImage.size());
+        List<Image> images = new ArrayList<>(arrayImage.size());
         for (Integer keys : sparseKeys) {
             Image originalImage = arrayImage.get(keys);
             Thumbnail thumbnail = thumbnails.get(keys);

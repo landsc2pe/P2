@@ -26,10 +26,9 @@ import com.jayjaylab.lesson.gallery.event.ClickEventId;
 import com.jayjaylab.lesson.gallery.fragment.FragmentFolder;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivity;
 import com.jayjaylab.lesson.gallery.presenter.PresenterMainActivityInterface;
-import com.jayjaylab.lesson.gallery.sample.AsyncTaskSample;
 import com.jayjaylab.lesson.gallery.sample.ThreadSample;
-import com.jayjaylab.lesson.gallery.util.eventbus.EventBus;
 import com.jayjaylab.lesson.gallery.util.LogTag;
+import com.jayjaylab.lesson.gallery.util.eventbus.EventBus;
 import com.jayjaylab.lesson.gallery.util.model.Image;
 import com.jayjaylab.lesson.gallery.view.ViewMainActivityInterface;
 
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements
             presenter.loadImage(this);
         }
 
-        test();
+//        test();
     }
 
     @Override

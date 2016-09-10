@@ -1,20 +1,15 @@
 package com.jayjaylab.lesson.gallery.util;
 
-import android.app.Activity;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
-import android.util.SparseArray;
+
 import com.jayjaylab.lesson.gallery.BuildConfig;
-import com.jayjaylab.lesson.gallery.activity.MainActivity;
-import com.jayjaylab.lesson.gallery.util.model.Thumbnail;
-import org.hamcrest.Matchers;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static org.hamcrest.Matchers.is;
@@ -26,7 +21,7 @@ import static org.junit.Assert.assertThat;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = android.os.Build.VERSION_CODES.LOLLIPOP)
-public class LoaderImageFolderTest  {
+public class LoaderImageTest {
     AppCompatActivity activity;
 
     @Before
